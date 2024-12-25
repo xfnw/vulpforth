@@ -13,14 +13,17 @@ DEFWORD lit, 0b010, exit
 	xchg ebx, eax	; put it on the stack
 	NEXT
 
+; ( a -- )
 DEFWORD drop, 'drop', 0b000, lit
 	pop ebx
 	NEXT
 
+; ( a -- a a )
 DEFWORD dup, 0b000, drop
 	push ebx
 	NEXT
 
+; ( a b -- a b a b )
 DEFWORD ddup, '2dup', 0b000, dup
 	pop eax
 	push eax	; pop+push is smaller than a mov
@@ -28,16 +31,23 @@ DEFWORD ddup, '2dup', 0b000, dup
 	push eax
 	NEXT
 
+; ( a b -- b a )
 DEFWORD swap, 0b000, ddup
 	pop eax
 	xchg ebx, eax
 	push eax
 	NEXT
 
+; ( a -- stack[a] )
 DEFWORD nth, 0b000, swap
 	mov ebx, [esp+ebx]
 	NEXT
 
+; ( arg3 arg2 arg1 num -- res )
+; note that the 4 stack items will still be consumed even
+; if the syscall takes less than 3 args.
+; conversely, if the syscall takes more than 3 args, linux
+; itself will grab a variable number of extra stack items.
 DEFWORD syscall, 0b000, nth
 	xchg eax, ebx	; get syscall number from top of stack
 	pop ebx		; syscall args
@@ -47,27 +57,32 @@ DEFWORD syscall, 0b000, nth
 	xchg ebx, eax	; put return value at our top of stack
 	NEXT
 
+; ( a b -- a+b )
 DEFWORD plus, '+', 0b000, syscall
 	pop eax
 	add ebx, eax
 	NEXT
 
+; ( a b -- b-a )
 DEFWORD minusinv, '-^', 0b000, plus
 	pop eax
 	sub ebx, eax
 	NEXT
 
+; ( a b -- a-b )
 DEFWORD minus, '-', 0b000, minusinv
 	pop eax
 	xchg ebx, eax
 	sub ebx, eax
 	NEXT
 
+; ( a b -- a*b )
 DEFWORD mulsigned, '*', 0b000, minus
 	pop eax
 	imul ebx, eax
 	NEXT
 
+; ( a b -- a/b a%b )
 DEFWORD divmodsigned, '/mod', 0b000, mulsigned
 	pop eax
 	cdq

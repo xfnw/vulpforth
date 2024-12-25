@@ -1,5 +1,7 @@
 all: vulpforth.bin
 
+vulpforth.bin: elf.asm words.asm
+
 %.bin: %.asm
 	nasm -f bin -o $@ $<
 	chmod +x $@

@@ -13,15 +13,28 @@ DEFWORD lit, 0b010, exit
 	xchg ebx, eax	; put it on the stack
 	NEXT
 
-DEFWORD wpop, 'pop', 0b000, lit
+DEFWORD drop, 'drop', 0b000, lit
 	pop ebx
 	NEXT
 
-DEFWORD dup, 0b000, wpop
+DEFWORD dup, 0b000, drop
 	push ebx
 	NEXT
 
-DEFWORD nth, 0b000, dup
+DEFWORD ddup, '2dup', 0b000, dup
+	pop eax
+	push eax	; pop+push is smaller than a mov
+	push ebx
+	push eax
+	NEXT
+
+DEFWORD swap, 0b000, ddup
+	pop eax
+	xchg ebx, eax
+	push eax
+	NEXT
+
+DEFWORD nth, 0b000, swap
 	mov ebx, [esp+ebx]
 	NEXT
 
@@ -39,7 +52,31 @@ DEFWORD plus, '+', 0b000, syscall
 	add ebx, eax
 	NEXT
 
-DEFWORD bye, 0b000, plus
+DEFWORD minusinv, '-^', 0b000, plus
+	pop eax
+	sub ebx, eax
+	NEXT
+
+DEFWORD minus, '-', 0b000, minusinv
+	pop eax
+	xchg ebx, eax
+	sub ebx, eax
+	NEXT
+
+DEFWORD mulsigned, '*', 0b000, minus
+	pop eax
+	imul ebx, eax
+	NEXT
+
+DEFWORD divmodsigned, '/mod', 0b000, mulsigned
+	pop eax
+	cdq
+	idiv ebx
+	push eax
+	xchg ebx, edx
+	NEXT
+
+DEFWORD bye, 0b000, divmodsigned
 	call enter
 	dd lit, 0 ; success
 	dd lit, 1 ; nr_exit

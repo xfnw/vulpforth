@@ -9,7 +9,7 @@ DEFWORD exit, 0b000, enter
 
 DEFWORD lit, 0b010, exit
 	push ebx	; make room in working stack
-	lodsw		; grab next colon-word token
+	lodsd		; grab next colon-word token
 	xchg ebx, eax	; put it on the stack
 	NEXT
 
@@ -38,3 +38,13 @@ DEFWORD plus, '+', 0b000, syscall
 	pop eax
 	add ebx, eax
 	NEXT
+
+DEFWORD bye, 0b000, plus
+	call enter
+	dd lit, 0 ; success
+	dd lit, 1 ; nr_exit
+	dd syscall
+
+DEFWORD init, 0b000, bye
+	call enter
+	dd bye

@@ -50,12 +50,16 @@ section .text
 %include "words.asm"
 
 here	dd 0	; address of next unused memory
-latest	dd plus	; address of newest defined word
+latest	dd init	; address of newest defined word
 
 _start:
-	cld	; set direction to forwards
+	cld			; set direction to forwards
+	mov ebp, retstack	; initialize return stack
+	call enter
+	dd init
 
 section .bss
+wordbuf resb 32
 retstack resd 1024
 
 filesize equ $ - $$

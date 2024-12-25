@@ -45,6 +45,8 @@ DEFWORD %1, %str(%1), %2, %3
 	add ebp, 4	; increment top of return stack
 %endmacro
 
+section .text
+
 DEFWORD enter, 0b010, 0
 	PUSHRET esi	; save previous word in return stack
 	pop esi		; grab new word pointer from call
@@ -91,5 +93,8 @@ latest	dd plus	; address of newest defined word
 
 _start:
 	cld	; set direction to forwards
+
+section .bss
+retstack resd 1024
 
 filesize equ $ - $$

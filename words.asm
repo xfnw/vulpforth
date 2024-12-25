@@ -13,8 +13,30 @@ DEFWORD lit, 0b010, exit
 	xchg ebx, eax	; put it on the stack
 	NEXT
 
+DEFWORD goto, 0b010, lit
+	lodsd		; grab next colon-word token
+	add esi, eax	; offset it
+	NEXT
+
+DEFWORD gotz, 0b010, goto
+	cmp ebx, 0	; check if top of stack is 0
+	pop ebx		; consume it
+	lodsd		; grab next colon-word token
+	jnz notgon	; skip if not zero
+	add esi, eax	; offset it
+notgon	NEXT
+
+; ( a b c -- b c a )
+DEFWORD rot, 0b000, gotz
+	pop eax
+	pop edx
+	push eax
+	push ebx
+	xchg ebx, edx
+	NEXT
+
 ; ( a -- )
-DEFWORD drop, 'drop', 0b000, lit
+DEFWORD drop, 'drop', 0b000, rot
 	pop ebx
 	NEXT
 

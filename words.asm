@@ -113,7 +113,48 @@ DEFWORD divmodsigned, '/mod', 0b000, mulsigned
 	xchg ebx, edx
 	NEXT
 
-DEFWORD bye, 0b000, divmodsigned
+; ( -- waddr wsize )
+DEFWORD getword, 'word', 0b000, divmodsigned
+	push ebx
+	xor ebx, ebx
+	mov ecx, wordbuf-1
+readchr	xor edx, edx
+	inc edx
+	xor eax, eax
+	mov al, 3		; read
+	inc ecx			; the next byte
+	int 0x80		; syscall
+	cmp eax, 1		; did it error?
+	jne badrd		; yes, give failed
+	mov eax, [ecx]		; no, lets check it
+	imul eax, 0xf641ae81
+	and eax, 0xa00ac010
+	cmp eax, 0x8000c000	; is whitespace?
+	jne readchr		; no, loop some more
+	mov ebx, wordbuf
+	push ebx
+	sub ecx, ebx
+	xchg ebx, ecx
+	NEXT
+badrd	xor ebx, ebx
+	push ebx
+	NEXT
+
+; ( c -- )
+DEFWORD putchar, 0b000, getword
+	push ebx
+	xor eax, eax
+	mov al, 4
+	xor ebx, ebx
+	inc ebx
+	mov ecx, esp
+	mov edx, ebx
+	int 0x80
+	pop ebx
+	pop ebx
+	NEXT
+
+DEFWORD bye, 0b000, putchar
 	call enter
 	dd lit, 0 ; success
 	dd lit, 1 ; nr_exit

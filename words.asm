@@ -58,8 +58,18 @@ DEFWORD over, 0b000, rot2
 	xchg ebx, eax
 	NEXT
 
+; ( a b c -- a b c a )
+DEFWORD dover, '2over', 0b000, over
+	pop eax
+	pop ecx
+	push eax
+	push ecx
+	push ebx
+	xchg ebx, ecx
+	NEXT
+
 ; ( a -- )
-DEFWORD drop, 'drop', 0b000, over
+DEFWORD drop, 'drop', 0b000, dover
 	pop ebx
 	NEXT
 

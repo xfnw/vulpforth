@@ -400,7 +400,23 @@ DEFWORD dictflags, 0b000, dictprev
 
 ; ( str len -- addr )
 DEFWORD find, 0b000, dictflags
-	NEXT
+	call enter
+	dd lit, latest
+	dd dat
+findrep	dd rot2
+	dd ddup
+	dd lit, 4
+	dd nth
+	dd dictname
+	dd streq
+	dd gonz, findbye - $ - 8
+	dd rot
+	dd dictprev
+	dd dup
+	dd gonz, findrep - $ - 8
+	dd rot2
+findbye	dd ddrop
+	dd exit
 
 ; ( -- addr )
 DEFWORD wordaddr, `'`, 0b000, find

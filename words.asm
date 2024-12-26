@@ -333,14 +333,13 @@ eqneq	NEXT
 DEFWORD memeq, 'mem=', 0b000, eq
 	xchg ecx, ebx
 	xor ebx, ebx
-	inc ebx
 	pop eax
 	pop edx
 lmemeq	mov edi, [eax+ecx]
 	cmp edi, [edx+ecx]
 	jne nmemeq
 	loop lmemeq
-	xor ebx, ebx
+	inc ebx
 nmemeq	NEXT
 
 ; ( str1 len1 str2 len2 -- str1==str2 )

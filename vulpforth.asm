@@ -46,6 +46,7 @@ DEFWORD %1, %str(%1), %2, %3
 %endmacro
 
 section .text
+global _start
 
 %include "words.asm"
 

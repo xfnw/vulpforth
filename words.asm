@@ -334,9 +334,9 @@ DEFWORD memeq, 'mem=', 0b000, eq
 	xchg ecx, ebx
 	xor ebx, ebx
 	pop eax
-	pop edx
-lmemeq	mov edi, [eax+ecx]
-	cmp edi, [edx+ecx]
+	pop edi
+lmemeq	mov dl, [eax+ecx-1]
+	cmp dl, [edi+ecx-1]
 	jne nmemeq
 	loop lmemeq
 	inc ebx
@@ -348,7 +348,7 @@ DEFWORD streq, 'str=', 0b000, memeq
 	dd rot
 	dd over
 	dd eq
-	dd gotz, nstreq - $
+	dd gotz, nstreq - $ - 8
 	dd memeq
 	dd exit
 nstreq	dd drop

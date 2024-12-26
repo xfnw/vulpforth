@@ -43,10 +43,12 @@ DEFWORD rot, 0b000, jump
 
 ; ( a b c -- c a b )
 DEFWORD rot2, 'rot>', 0b000, rot
-	call enter
-	dd rot
-	dd rot
-	dd exit
+	pop eax
+	pop edx
+	push ebx
+	push edx
+	xchg ebx, eax
+	NEXT
 
 ; ( a b -- a b a )
 DEFWORD over, 0b000, rot2

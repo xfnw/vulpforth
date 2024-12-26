@@ -1,4 +1,4 @@
-DEFWORD enter, 0b010, 0
+DEFWORD enter, 0b010, latest
 	PUSHRET esi	; save previous word in return stack
 	pop esi		; grab new word pointer from call
 	NEXT
@@ -35,6 +35,7 @@ DEFWORD gonz, 0b010, goto
 	add esi, eax	; offset it
 yesgon	NEXT
 
+; ( a -- )
 DEFWORD jump, 0b000, gonz
 	xchg eax, ebx
 	pop ebx

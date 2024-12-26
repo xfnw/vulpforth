@@ -48,11 +48,8 @@ DEFWORD %1, %str(%1), %2, %3
 section .text
 global _start
 
+%include "vars.asm"
 %include "words.asm"
-
-hexchr	db '0123456789abcdef'
-wordfd	dd 0	; file descriptor to read words from
-latest	dd init	; address of newest defined word
 
 _start:
 	cld			; set direction to forwards
@@ -62,8 +59,6 @@ _start:
 	dd init
 
 section .bss
-here resd 1		; address of next unused memory
-stackstart resd 1	; address of start of working stack
 wordlen resb 1		; length of last read word
 wordbuf resb 32		; last read word
 retstack resd 1024	; the return stack

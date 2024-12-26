@@ -27,7 +27,15 @@ DEFWORD gotz, 0b010, goto
 	add esi, eax	; offset it
 notgon	NEXT
 
-DEFWORD jump, 0b000, gotz
+DEFWORD gonz, 0b010, goto
+	cmp ebx, 0	; check if top of stack is 0
+	pop ebx		; consume it
+	lodsd		; grab next colon-word token
+	jz yesgon	; skip if zero
+	add esi, eax	; offset it
+yesgon	NEXT
+
+DEFWORD jump, 0b000, gonz
 	xchg eax, ebx
 	pop ebx
 	jmp eax
@@ -69,12 +77,18 @@ DEFWORD dover, '2over', 0b000, over
 	NEXT
 
 ; ( a -- )
-DEFWORD drop, 'drop', 0b000, dover
+DEFWORD drop, 0b000, dover
+	pop ebx
+	NEXT
+
+; ( a a -- )
+DEFWORD ddrop, 0b000, drop
+	pop ebx
 	pop ebx
 	NEXT
 
 ; ( a -- a a )
-DEFWORD dup, 0b000, drop
+DEFWORD dup, 0b000, ddrop
 	push ebx
 	NEXT
 
@@ -102,7 +116,7 @@ DEFWORD swap, 0b000, ddup
 
 ; ( a -- stack[a] )
 DEFWORD nth, 0b000, swap
-	mov ebx, [esp+ebx]
+	mov ebx, [esp+ebx*4]
 	NEXT
 
 ; ( arg3 arg2 arg1 num -- res )
@@ -157,8 +171,18 @@ DEFWORD minusinv, '-^', 0b000, plus
 	sub ebx, eax
 	NEXT
 
+; ( a -- a+1 )
+DEFWORD increment, '1+', 0b000, minusinv
+	add ebx, 1
+	NEXT
+
+; ( a -- a-1 )
+DEFWORD decrement, '1-', 0b000, increment
+	sub ebx, 1
+	NEXT
+
 ; ( a b -- a-b )
-DEFWORD minus, '-', 0b000, minusinv
+DEFWORD minus, '-', 0b000, decrement
 	pop eax
 	xchg ebx, eax
 	sub ebx, eax

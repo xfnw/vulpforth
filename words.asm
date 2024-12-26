@@ -117,7 +117,7 @@ DEFWORD divmodsigned, '/mod', 0b000, mulsigned
 ; ( -- waddr wsize )
 DEFWORD getword, 'word', 0b000, divmodsigned
 	push ebx
-	xor ebx, ebx
+	mov ebx, [wordfd]
 	mov ecx, wordbuf-1
 readchr	xor edx, edx
 	inc edx

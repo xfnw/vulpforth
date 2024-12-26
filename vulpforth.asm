@@ -51,6 +51,7 @@ global _start
 %include "words.asm"
 
 here	dd 0	; address of next unused memory
+wordfd	dd 0	; file descriptor to read words from
 latest	dd init	; address of newest defined word
 
 _start:

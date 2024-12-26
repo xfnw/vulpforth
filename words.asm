@@ -203,7 +203,17 @@ DEFWORD emit, 0b000, getword
 	pop ebx
 	NEXT
 
-DEFWORD cat, 'c@', 0b000, emit
+; ( str len -- )
+DEFWORD emits, 0b000, emit
+	call enter
+	dd swap
+	dd lit, 1
+	dd lit, 4
+	dd syscall
+	dd drop
+	dd exit
+
+DEFWORD cat, 'c@', 0b000, emits
 	mov bl, [ebx]
 	and ebx, 0xff
 	NEXT

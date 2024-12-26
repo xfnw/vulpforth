@@ -4,7 +4,8 @@ DEFWORD enter, 0b010, 0
 	NEXT
 
 DEFWORD exit, 0b000, enter
-	POPRET esi	; switch to words at top of return stack
+	add ebp, -4	; switch to words at top of return stack
+	mov esi, [ebp]
 	NEXT
 
 DEFWORD lit, 0b010, exit
@@ -135,10 +136,10 @@ readchr	xor edx, edx
 	push ebx
 	sub ecx, ebx
 	xchg ebx, ecx
-	NEXT
+goodrd	NEXT
 badrd	xor ebx, ebx
 	push ebx
-	NEXT
+	jmp goodrd
 
 ; ( c -- )
 DEFWORD putchar, 0b000, getword

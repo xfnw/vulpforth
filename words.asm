@@ -450,6 +450,8 @@ DEFWORD printstack, '.S', 0b000, stackpos
 	dd stackpos
 	dd swap
 	dd dump
+	dd lit, `\n`
+	dd emit
 	dd exit
 
 DEFWORD bye, 0b000, printstack

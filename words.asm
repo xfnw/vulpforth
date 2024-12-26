@@ -27,8 +27,13 @@ DEFWORD gotz, 0b010, goto
 	add esi, eax	; offset it
 notgon	NEXT
 
+DEFWORD jump, 0b000, gotz
+	xchg eax, ebx
+	pop ebx
+	jmp eax
+
 ; ( a b c -- b c a )
-DEFWORD rot, 0b000, gotz
+DEFWORD rot, 0b000, jump
 	pop eax
 	pop edx
 	push eax

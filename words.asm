@@ -184,6 +184,7 @@ readchr	xor edx, edx
 	push ebx
 	sub ecx, ebx
 	xchg ebx, ecx
+	mov [wordlen], bl
 goodrd	NEXT
 badrd	xor ebx, ebx
 	push ebx

@@ -51,7 +51,6 @@ global _start
 %include "words.asm"
 
 hexchr	db '0123456789abcdef'
-here	dd 0	; address of next unused memory
 wordfd	dd 0	; file descriptor to read words from
 latest	dd init	; address of newest defined word
 
@@ -62,7 +61,9 @@ _start:
 	dd init
 
 section .bss
-wordbuf resb 32
-retstack resd 1024
+here resd 1		; address of next unused memory
+wordlen resb 1		; length of last read word
+wordbuf resb 32		; last read word
+retstack resd 1024	; the return stack
 
 filesize equ $ - $$

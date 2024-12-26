@@ -36,8 +36,16 @@ DEFWORD rot, 0b000, gotz
 	xchg ebx, edx
 	NEXT
 
+; ( a b -- a b a)
+DEFWORD over, 0b000, rot
+	pop eax
+	push eax
+	push ebx
+	xchg ebx, eax
+	NEXT
+
 ; ( a -- )
-DEFWORD drop, 'drop', 0b000, rot
+DEFWORD drop, 'drop', 0b000, over
 	pop ebx
 	NEXT
 
@@ -155,7 +163,46 @@ DEFWORD putchar, 0b000, getword
 	pop ebx
 	NEXT
 
-DEFWORD bye, 0b000, putchar
+; ( a b -- a==b )
+DEFWORD eq, '=', 0b000, putchar
+	pop eax
+	xchg edx, ebx
+	xor ebx, ebx
+	cmp eax, edx
+	jne eqneq
+	inc ebx
+eqneq	NEXT
+
+; ( m1 m2 len -- m1==m2 )
+DEFWORD memeq, 'mem=', 0b000, eq
+	xchg ecx, ebx
+	xor ebx, ebx
+	inc ebx
+	pop eax
+	pop edx
+lmemeq	mov edi, [eax+ecx]
+	cmp edi, [edx+ecx]
+	jne nmemeq
+	loop lmemeq
+	xor ebx, ebx
+nmemeq	NEXT
+
+; ( str1 len1 str2 len2 -- str1==str2 )
+DEFWORD streq, 'str=', 0b000, memeq
+	call enter
+	dd rot
+	dd over
+	dd eq
+	dd gotz, nstreq - $
+	dd memeq
+	dd exit
+nstreq	dd drop
+	dd drop
+	dd drop
+	dd lit, 0
+	dd exit
+
+DEFWORD bye, 0b000, streq
 	call enter
 	dd lit, 0 ; success
 	dd lit, 1 ; nr_exit

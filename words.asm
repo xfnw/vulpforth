@@ -334,9 +334,52 @@ nstreq	dd drop
 	dd lit, 0
 	dd exit
 
-DEFWORD find, 0b000, streq
+; ( addr -- len )
+DEFWORD dictlen, 0b000, streq
+	call enter
+	dd lit, 5
+	dd minus
+	dd cat
+	dd lit, 0b00011111
+	dd band
+	dd exit
+
+; ( addr -- str len )
+DEFWORD dictname, 0b000, dictlen
+	call enter
+	dd dup
+	dd dictlen
+	dd dup
+	dd rot
+	dd minusinv
+	dd lit, 5
+	dd minus
+	dd swap
+	dd exit
+
+; ( addr -- addr )
+DEFWORD dictprev, 0b000, dictname
+	call enter
+	dd lit, 4
+	dd minus
+	dd dat
+	dd exit
+
+; ( addr -- flags )
+DEFWORD dictflags, 0b000, dictprev
+	call enter
+	dd lit, 5
+	dd minus
+	dd cat
+	dd lit, 5
+	dd rshift
+	dd exit
+
+; ( str len -- addr )
+DEFWORD find, 0b000, dictflags
 	NEXT
 
+; ( -- addr )
 DEFWORD wordaddr, `'`, 0b000, find
 	call enter
 	dd getword

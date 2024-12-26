@@ -78,8 +78,15 @@ DEFWORD dup, 0b000, drop
 	push ebx
 	NEXT
 
+; ( a -- a a? )
+DEFWORD cdup, '?dup', 0b000, dup
+	cmp ebx, 0
+	jz nodup
+	push ebx
+nodup	NEXT
+
 ; ( a b -- a b a b )
-DEFWORD ddup, '2dup', 0b000, dup
+DEFWORD ddup, '2dup', 0b000, cdup
 	pop eax
 	push eax	; pop+push is smaller than a mov
 	push ebx

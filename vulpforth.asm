@@ -56,12 +56,14 @@ latest	dd init	; address of newest defined word
 
 _start:
 	cld			; set direction to forwards
+	mov [stackstart], esp	; keep initial stack position
 	mov ebp, retstack	; initialize return stack
 	call enter
 	dd init
 
 section .bss
 here resd 1		; address of next unused memory
+stackstart resd 1	; address of start of working stack
 wordlen resb 1		; length of last read word
 wordbuf resb 32		; last read word
 retstack resd 1024	; the return stack

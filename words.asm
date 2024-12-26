@@ -410,7 +410,50 @@ DEFWORD wordaddr, `'`, 0b000, find
 	dd find
 	dd exit
 
-DEFWORD bye, 0b000, wordaddr
+; ( addr len -- )
+DEFWORD dump, 0b000, wordaddr
+	call enter
+dumploo	dd cdup
+	dd gotz, dumpbye - $ - 8
+	dd swap
+	dd dup
+	dd dat
+	dd printhex
+	dd lit, ' '
+	dd emit
+	dd lit, 4
+	dd plus
+	dd swap
+	dd decrement
+	dd goto, dumploo - $ - 8
+dumpbye	dd drop
+	dd exit
+
+; ( -- h )
+DEFWORD stackheight, 0b000, dump
+	mov eax, esp
+	push ebx
+	mov ebx, [stackstart]
+	sub ebx, eax
+	shr ebx, 2
+	NEXT
+
+; ( -- p )
+DEFWORD stackpos, 0b000, stackheight
+	mov eax, esp
+	push ebx
+	xchg ebx, eax
+	NEXT
+
+DEFWORD printstack, '.S', 0b000, stackpos
+	call enter
+	dd stackheight
+	dd stackpos
+	dd swap
+	dd dump
+	dd exit
+
+DEFWORD bye, 0b000, printstack
 	call enter
 	dd lit, 0 ; success
 	dd lit, 1 ; nr_exit

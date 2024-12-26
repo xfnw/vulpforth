@@ -36,8 +36,15 @@ DEFWORD rot, 0b000, gotz
 	xchg ebx, edx
 	NEXT
 
-; ( a b -- a b a)
-DEFWORD over, 0b000, rot
+; ( a b c -- c a b )
+DEFWORD rot2, 'rot>', 0b000, rot
+	call enter
+	dd rot
+	dd rot
+	dd exit
+
+; ( a b -- a b a )
+DEFWORD over, 0b000, rot2
 	pop eax
 	push eax
 	push ebx
@@ -88,8 +95,34 @@ DEFWORD syscall, 0b000, nth
 	xchg ebx, eax	; put return value at our top of stack
 	NEXT
 
+; ( a b == a<<b )
+DEFWORD lshift, 0b000, syscall
+	pop ecx
+	xchg ebx, ecx
+	shl ebx, cl
+	NEXT
+
+; ( a b == a>>b )
+DEFWORD rshift, 0b000, lshift
+	pop ecx
+	xchg ebx, ecx
+	shr ebx, cl
+	NEXT
+
+; ( a b -- a&b )
+DEFWORD band, 'and', 0b000, rshift
+	pop eax
+	and ebx, eax
+	NEXT
+
+; ( a b -- a|b )
+DEFWORD bor, 'or', 0b000, band
+	pop eax
+	or ebx, eax
+	NEXT
+
 ; ( a b -- a+b )
-DEFWORD plus, '+', 0b000, syscall
+DEFWORD plus, '+', 0b000, bor
 	pop eax
 	add ebx, eax
 	NEXT
@@ -125,7 +158,7 @@ DEFWORD divmodsigned, '/mod', 0b000, mulsigned
 ; ( -- waddr wsize )
 DEFWORD getword, 'word', 0b000, divmodsigned
 	push ebx
-	mov ebx, [wordfd]
+regetw	mov ebx, [wordfd]
 	mov ecx, wordbuf-1
 readchr	xor edx, edx
 	inc edx
@@ -141,6 +174,8 @@ readchr	xor edx, edx
 	cmp eax, 0x8000c000	; is whitespace?
 	jne readchr		; no, loop some more
 	mov ebx, wordbuf
+	cmp ecx, ebx		; is /only/ whitespace?
+	je regetw		; yes, try again
 	push ebx
 	sub ecx, ebx
 	xchg ebx, ecx
@@ -150,7 +185,7 @@ badrd	xor ebx, ebx
 	jmp goodrd
 
 ; ( c -- )
-DEFWORD putchar, 0b000, getword
+DEFWORD emit, 0b000, getword
 	push ebx
 	xor eax, eax
 	mov al, 4
@@ -163,8 +198,70 @@ DEFWORD putchar, 0b000, getword
 	pop ebx
 	NEXT
 
+DEFWORD cat, 'c@', 0b000, emit
+	mov bl, [ebx]
+	and ebx, 0xff
+	NEXT
+
+DEFWORD cput, 'c!', 0b000, cat
+	pop eax
+	mov [ebx], al
+	pop ebx
+	NEXT
+
+DEFWORD dat, '@', 0b000, cput
+	mov ebx, [ebx]
+	NEXT
+
+DEFWORD dput, '!', 0b000, dat
+	pop eax
+	mov [ebx], eax
+	pop ebx
+	NEXT
+
+; ( c -- )
+DEFWORD printhexc, '.xc', 0b000, dput
+	call enter
+	dd lit, 0xf
+	dd band
+	dd lit, hexchr
+	dd plus
+	dd cat
+	dd emit
+	dd exit
+	
+; ( c -- )
+DEFWORD printhex1, '.x1', 0b000, printhexc
+	call enter
+	dd dup
+	dd lit, 4
+	dd rshift
+	dd printhexc
+	dd printhexc
+	dd exit
+
+; ( c -- )
+DEFWORD printhex2, '.x2', 0b000, printhex1
+	call enter
+	dd dup
+	dd lit, 8
+	dd rshift
+	dd printhex1
+	dd printhex1
+	dd exit
+
+; ( c -- )
+DEFWORD printhex, '.x', 0b000, printhex2
+	call enter
+	dd dup
+	dd lit, 16
+	dd rshift
+	dd printhex2
+	dd printhex2
+	dd exit
+
 ; ( a b -- a==b )
-DEFWORD eq, '=', 0b000, putchar
+DEFWORD eq, '=', 0b000, printhex
 	pop eax
 	xchg edx, ebx
 	xor ebx, ebx
@@ -202,7 +299,16 @@ nstreq	dd drop
 	dd lit, 0
 	dd exit
 
-DEFWORD bye, 0b000, streq
+DEFWORD find, 0b000, streq
+	NEXT
+
+DEFWORD wordaddr, `'`, 0b000, find
+	call enter
+	dd getword
+	dd find
+	dd exit
+
+DEFWORD bye, 0b000, wordaddr
 	call enter
 	dd lit, 0 ; success
 	dd lit, 1 ; nr_exit

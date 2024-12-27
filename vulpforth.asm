@@ -52,9 +52,10 @@ global _start
 %include "words.asm"
 
 _start:
-	cld			; set direction to forwards
 	mov [stackstart], esp	; keep initial stack position
-	mov ebp, retstack	; initialize return stack
+restart	mov ebp, retstack	; initialize return stack
+	mov [wordfd], dword 0	; read words from stdin
+	cld			; set direction to forwards
 	call enter
 	dd init
 

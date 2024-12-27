@@ -477,6 +477,44 @@ DEFWORD bye, 0b000, printstack
 	dd lit, 1 ; nr_exit
 	dd syscall
 
-DEFWORD init, 0b000, bye
+abrtstr	db ' '
+DEFWORD abort, 0b000, bye
 	call enter
-	dd bye
+	dd lit, abrtstr
+	dd lit, 6
+	dd emits
+	dd restart
+
+wnfstr	db ' word not found'
+intstr	db ' noninterpretable'
+okstr	db ` ok\n`
+DEFWORD init, 0b000, abort
+	call enter
+	dd lit, okstr
+	dd lit, 4
+	dd emits
+inmore	dd getword
+	dd ddup
+	dd find
+	dd cdup
+	dd gonz, incii - $ - 8
+	dd emits
+	dd lit, wnfstr
+	dd lit, 15
+	dd emits
+	dd abort
+incii	dd dup
+	dd dictflags
+	dd lit, 0b010
+	dd band
+	dd gotz, injmp - $ - 8
+	dd drop
+	dd emits
+	dd lit, intstr
+	dd lit, 17
+	dd emits
+	dd abort
+injmp	dd rot2
+	dd ddrop
+	dd jump
+	dd goto, inmore - $ - 8

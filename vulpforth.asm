@@ -36,8 +36,8 @@ DEFWORD %1, %str(%1), %2, %3
 %endmacro
 
 %macro POPRET 1
-	mov %1, [ebp]	; take value from top of return stack
 	add ebp, -4	; decrement top of return stack
+	mov %1, [ebp]	; take value from top of return stack
 %endmacro
 
 %macro PUSHRET 1

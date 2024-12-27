@@ -4,8 +4,7 @@ DEFWORD enter, 0b010, latest
 	NEXT
 
 DEFWORD exit, 0b000, enter
-	add ebp, -4	; switch to words at top of return stack
-	mov esi, [ebp]
+	POPRET esi	; switch to words at top of return stack
 	NEXT
 
 DEFWORD lit, 0b010, exit

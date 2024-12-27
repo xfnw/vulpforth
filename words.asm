@@ -527,15 +527,16 @@ numnob	sub eax, 0x30
 
 wnfstr	db ' word not found'
 intstr	db ' noninterpretable'
-okstr	db ` ok\n`
-DEFWORD init, 0b000, parsenum
+DEFWORD interpreter, 0b000, parsenum
 	call enter
-	dd lit, okstr
-	dd lit, 4
-	dd emits
 inmore	dd getword
 	dd ddup
-	dd find
+	dd dup
+	dd gonz, innote - $ - 8
+	dd ddrop
+	dd ddrop
+	dd exit
+innote	dd find
 	dd cdup
 	dd gonz, incii - $ - 8
 	dd startsnum
@@ -562,3 +563,12 @@ injmp	dd rot2
 	dd ddrop
 	dd jump
 	dd goto, inmore - $ - 8
+
+okstr	db ` ok\n`
+DEFWORD init, 0b000, interpreter
+	call enter
+	dd lit, okstr
+	dd lit, 4
+	dd emits
+	dd interpreter
+	dd bye

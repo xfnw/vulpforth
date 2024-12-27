@@ -213,8 +213,15 @@ DEFWORD isneg, '?neg', 0b000, negate
 	shr ebx, 31
 	NEXT
 
+; ( a -- |a| )
+DEFWORD absv, 'abs', 0b000, isneg
+	test ebx, 1<<31
+	jz alrpos
+	neg ebx
+alrpos	NEXT
+
 ; ( -- waddr wsize )
-DEFWORD getword, 'word', 0b000, isneg
+DEFWORD getword, 'word', 0b000, absv
 	push ebx
 regetw	mov ebx, [wordfd]
 	mov ecx, wordbuf-1
@@ -330,7 +337,6 @@ DEFWORD printhex, '.x', 0b000, printhex2
 	dd exit
 
 ; ( c -- )
-; FIXME: outputs "-./,),(-*,(" instead of "-2147483648" for 1<<31
 DEFWORD print, '.', 0b000, printhex
 	call enter
 	dd lit, -1
@@ -338,11 +344,11 @@ DEFWORD print, '.', 0b000, printhex
 	dd dup
 	dd isneg
 	dd gotz, pnotn - $ - 8
-	dd negate
 	dd lit, '-'
 	dd emit
 pnotn	dd lit, 10
 	dd divmodsigned
+	dd absv
 	dd lit, 0x30
 	dd plus
 	dd swap

@@ -485,10 +485,50 @@ DEFWORD abort, 0b000, bye
 	dd emits
 	dd restart
 
+; ( str len -- str len b )
+DEFWORD startsnum, '?startsnum', 0b000, abort
+	pop edx
+	push edx
+	push ebx
+	xor ebx, ebx
+	xor eax, eax
+	mov al, [edx]
+	imul eax, 0xff706015
+	and eax, 0xe0001ee4
+	cmp eax, 0xe00002c4
+	jle notanum
+	inc ebx
+notanum	NEXT
+
+; ( str len -- num )
+DEFWORD parsenum, 0b000, startsnum
+	pop edx		; str ptr
+	xchg ecx, ebx	; length
+	xor ebx, ebx	; result
+	xor eax, eax
+	mov al, '$'
+	cmp al, [edx]	; is hex?
+	mov al, 10	; decimal
+	jne numst
+	mov al, 16	; hex
+	inc edx		; skip the $
+	dec ecx
+numst	mov edi, eax
+numloop	imul ebx, edi
+	mov al, [edx]
+	cmp al, 0x61	; handle hex >9
+	jl numnob
+	sub eax, 0x31
+numnob	sub eax, 0x30
+	add ebx, eax
+	inc edx
+	loop numloop
+	NEXT
+
 wnfstr	db ' word not found'
 intstr	db ' noninterpretable'
 okstr	db ` ok\n`
-DEFWORD init, 0b000, abort
+DEFWORD init, 0b000, parsenum
 	call enter
 	dd lit, okstr
 	dd lit, 4
@@ -498,7 +538,11 @@ inmore	dd getword
 	dd find
 	dd cdup
 	dd gonz, incii - $ - 8
-	dd emits
+	dd startsnum
+	dd gotz, innonn - $ - 8
+	dd parsenum
+	dd goto, inmore - $ - 8
+innonn	dd emits
 	dd lit, wnfstr
 	dd lit, 15
 	dd emits

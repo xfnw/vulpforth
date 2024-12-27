@@ -468,8 +468,16 @@ DEFWORD wordaddr, `'`, 0b000, find
 	dd find
 	dd exit
 
+; ( -- b )
+DEFWORD wordchar, `''`, 0b000, wordaddr
+	call enter
+	dd getword
+	dd gotz, wnowc - $ - 8
+	dd cat
+wnowc	dd exit
+
 ; ( addr len -- )
-DEFWORD dump, 0b000, wordaddr
+DEFWORD dump, 0b000, wordchar
 	call enter
 dumploo	dd cdup
 	dd gotz, dumpbye - $ - 8

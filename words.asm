@@ -631,8 +631,59 @@ injmp	dd rot2
 	dd jump
 	dd goto, inmore - $ - 8
 
+; ( flags str len -- fd )
+; flags: 0 is read-only, 1 is write-only, 2 is read+write
+DEFWORD open, 0b000, interpreter
+	call enter
+	dd swap
+	dd dup
+	dd rot
+	dd plus
+	dd lit, 0
+	dd swap
+	dd cput		; null the end of the path
+	dd lit, 0	; dont specify mode
+	dd rot2
+	dd lit, 5	; open
+	dd syscall
+	dd exit
+
+; ( fd -- )
+DEFWORD close, 0b000, open
+	call enter
+	dd lit, 6	; close
+	dd ddup		; fill extra stuff with nonsense
+	dd syscall
+	dd drop
+	dd exit
+
+; ( str len -- )
+DEFWORD loadfrom, 0b000, close
+	call enter
+	dd lit, 0	; read-only
+	dd rot2
+	dd open
+	dd lit, wordfd
+	dd dput
+	dd interpreter
+	dd lit, wordfd
+	dd dup
+	dd dat
+	dd close
+	dd lit, 0
+	dd swap
+	dd dput
+	dd exit
+
+; ( -- )
+DEFWORD load, 0b000, loadfrom
+	call enter
+	dd getword
+	dd loadfrom
+	dd exit
+
 okstr	db ` ok\n`
-DEFWORD init, 0b000, interpreter
+DEFWORD init, 0b000, load
 	call enter
 	dd lit, okstr
 	dd lit, 4

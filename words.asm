@@ -654,8 +654,9 @@ DEFWORD close, 0b000, open
 	dd lit, 6	; close
 	dd ddup		; fill extra stuff with nonsense
 	dd syscall
-	dd drop
-	dd exit
+	dd gotz, clexit - $ - 8
+	dd abort
+clexit	dd exit
 
 ; ( str len -- )
 DEFWORD loadfrom, 0b000, close

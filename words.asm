@@ -329,8 +329,35 @@ DEFWORD printhex, '.x', 0b000, printhex2
 	dd printhex2
 	dd exit
 
+; ( c -- )
+; FIXME: outputs "-./,),(-*,(" instead of "-2147483648" for 1<<31
+DEFWORD print, '.', 0b000, printhex
+	call enter
+	dd lit, -1
+	dd swap
+	dd dup
+	dd isneg
+	dd gotz, pnotn - $ - 8
+	dd negate
+	dd lit, '-'
+	dd emit
+pnotn	dd lit, 10
+	dd divmodsigned
+	dd lit, 0x30
+	dd plus
+	dd swap
+	dd cdup
+	dd gonz, pnotn - $ - 8
+pprint	dd emit
+	dd dup
+	dd lit, -1
+	dd eq
+	dd gotz, pprint - $ - 8
+	dd drop
+	dd exit
+
 ; ( a b -- a==b )
-DEFWORD eq, '=', 0b000, printhex
+DEFWORD eq, '=', 0b000, print
 	pop eax
 	xchg edx, ebx
 	xor ebx, ebx

@@ -518,7 +518,7 @@ numloop	imul ebx, edi
 	mov al, [edx]
 	cmp al, 0x61	; handle hex >9
 	jl numnob
-	sub eax, 0x31
+	sub eax, 0x27
 numnob	sub eax, 0x30
 	add ebx, eax
 	inc edx

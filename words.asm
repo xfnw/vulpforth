@@ -217,7 +217,7 @@ readchr	xor edx, edx
 	int 0x80		; syscall
 	cmp eax, 1		; did it error?
 	jne badrd		; yes, give failed
-	mov eax, [ecx]		; no, lets check it
+	mov al, [ecx]		; no, lets check it
 	imul eax, 0xf641ae81
 	and eax, 0xa00ac010
 	cmp eax, 0x8000c000	; is whitespace?

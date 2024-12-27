@@ -61,7 +61,7 @@ restart	mov ebp, retstack	; initialize return stack
 
 section .bss
 wordlen resb 1		; length of last read word
-wordbuf resb 32		; last read word
+wordbuf resb 256	; last read word
 retstack resd 1024	; the return stack
 
 filesize equ $ - $$

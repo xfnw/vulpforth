@@ -525,11 +525,28 @@ numnob	and eax, 15
 	loop numloop
 	NEXT
 
+stunstr	db ' stack underflow'
+DEFWORD chkstack, 0b000, parsenum
+	cmp esp, [stackstart]
+	jle cstkok
+	mov esp, [stackstart]
+	xor ebx,ebx
+	inc ebx
+	mov eax, ebx
+	shl eax, 2
+	mov ecx, stunstr
+	mov edx, eax
+	shl edx, 2
+	int 0x80
+	jmp abort
+cstkok	NEXT
+
 wnfstr	db ' word not found'
 intstr	db ' noninterpretable'
-DEFWORD interpreter, 0b000, parsenum
+DEFWORD interpreter, 0b000, chkstack
 	call enter
-inmore	dd getword
+inmore	dd chkstack
+	dd getword
 	dd ddup
 	dd dup
 	dd gonz, innote - $ - 8

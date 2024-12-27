@@ -516,10 +516,10 @@ DEFWORD parsenum, 0b000, startsnum
 numst	mov edi, eax
 numloop	imul ebx, edi
 	mov al, [edx]
-	cmp al, 0x61	; handle hex >9
+	cmp al, 0x41	; handle hex >9
 	jl numnob
-	sub eax, 0x27
-numnob	sub eax, 0x30
+	add eax, 9
+numnob	and eax, 15
 	add ebx, eax
 	inc edx
 	loop numloop

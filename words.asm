@@ -203,8 +203,18 @@ DEFWORD divmodsigned, '/mod', 0b000, mulsigned
 	xchg ebx, edx
 	NEXT
 
+; ( a -- -a )
+DEFWORD negate, '~', 0b000, divmodsigned
+	neg ebx
+	NEXT
+
+; ( a -- a>>31 )
+DEFWORD isneg, '?neg', 0b000, negate
+	shr ebx, 31
+	NEXT
+
 ; ( -- waddr wsize )
-DEFWORD getword, 'word', 0b000, divmodsigned
+DEFWORD getword, 'word', 0b000, isneg
 	push ebx
 regetw	mov ebx, [wordfd]
 	mov ecx, wordbuf-1

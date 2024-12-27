@@ -122,8 +122,6 @@ DEFWORD nth, 0b000, swap
 ; ( arg3 arg2 arg1 num -- res )
 ; note that the 4 stack items will still be consumed even
 ; if the syscall takes less than 3 args.
-; conversely, if the syscall takes more than 3 args, linux
-; itself will grab a variable number of extra stack items.
 DEFWORD syscall, 0b000, nth
 	xchg eax, ebx	; get syscall number from top of stack
 	pop ebx		; syscall args
@@ -133,8 +131,24 @@ DEFWORD syscall, 0b000, nth
 	xchg ebx, eax	; put return value at our top of stack
 	NEXT
 
+; ( arg6 arg5 arg4 arg3 arg2 arg1 num -- res )
+DEFWORD syscall6, 0b000, syscall
+	xchg eax, ebx	; get syscall number from top of stack
+	pop ebx		; syscall args
+	pop ecx
+	pop edx
+	xchg esi, [esp]
+	xchg edi, [esp+4]
+	xchg ebp, [esp+8]
+	int 0x80	; syscall
+	xchg ebx, eax	; put return value at our top of stack
+	pop esi
+	pop edi
+	pop ebp
+	NEXT
+
 ; ( a b == a<<b )
-DEFWORD lshift, 0b000, syscall
+DEFWORD lshift, 0b000, syscall6
 	pop ecx
 	xchg ebx, ecx
 	shl ebx, cl
@@ -683,8 +697,54 @@ DEFWORD load, 0b000, loadfrom
 	dd loadfrom
 	dd exit
 
+; ( n -- )
+DEFWORD allochere, 0b000, load
+	call enter
+	dd lit, 0	; no offset
+	dd lit, -1	; anonymous fd
+	dd rot		; length
+	dd lit, 34	; flags: private+anonymous
+	dd lit, 7	; prot: read+write+execute
+	dd rot		; still length
+	dd lit, 0	; let kernel choose location
+	dd lit, 192	; mmap2 (AAAAAAAAAAAAAAAAAA)
+	dd syscall6
+	dd lit, here
+	dd dput
+	dd exit
+
+; ( n -- )
+DEFWORD alloc, 0b000, allochere
+	call enter
+	dd exit
+
+; ( n -- )
+DEFWORD dcom, 0b000, alloc
+	call enter
+	dd exit
+
+; ( n -- )
+DEFWORD ccom, 0b000, dcom
+	call enter
+	dd exit
+
+; ( -- )
+DEFWORD colon, 0b000, ccom
+	call enter
+	dd exit
+
+; ( -- )
+DEFWORD bracket, 0b100, colon
+	call enter
+	dd exit
+
+; ( -- )
+DEFWORD paren, 0b100, bracket
+	call enter
+	dd exit
+
 okstr	db ` ok\n`
-DEFWORD init, 0b000, load
+DEFWORD init, 0b000, paren
 	call enter
 	dd lit, okstr
 	dd lit, 4

@@ -332,8 +332,20 @@ DEFWORD emit, 0b000, string
 	pop ebx
 	NEXT
 
+DEFWORD spc, 0b000, emit
+	call enter
+	dd lit, ' '
+	dd emit
+	dd exit
+
+DEFWORD nl, 0b000, spc
+	call enter
+	dd lit, `\n`
+	dd emit
+	dd exit
+
 ; ( str len -- )
-DEFWORD emits, 0b000, emit
+DEFWORD emits, 0b000, nl
 	call enter
 	dd swap
 	dd lit, 1
@@ -550,13 +562,11 @@ DEFWORD words, 0b000, dictcom
 wdsloop	dd dup
 	dd dictname
 	dd emits
-	dd lit, ' '
-	dd emit
+	dd spc
 	dd dictprev
 	dd cdup
 	dd gonz, wdsloop
-	dd lit, `\n`
-	dd emit
+	dd nl
 	dd exit
 
 ; ( str len -- addr )
@@ -602,8 +612,7 @@ dumploo	dd cdup
 	dd dup
 	dd dat
 	dd printhex
-	dd lit, ' '
-	dd emit
+	dd spc
 	dd increment4
 	dd swap
 	dd decrement
@@ -633,8 +642,7 @@ DEFWORD printstack, '.S', 0b000, stackpos
 	dd stackpos
 	dd swap
 	dd dump
-	dd lit, `\n`
-	dd emit
+	dd nl
 	dd exit
 
 DEFWORD bye, 0b000, printstack

@@ -787,9 +787,50 @@ DEFWORD entercom, 'enter,', 0b000, ccom
 	dd exit
 
 ; ( -- )
+semicol	db ';'
 DEFWORD colon, ':', 0b000, entercom
 	call enter
+	dd getword
+	dd cdup
+	dd gotz, colabrt
+	dd dictcom
+	dd lit, 0xe8
+	dd ccom
+	dd entercom
+colmode	dd getword
+	dd cdup
+	dd gotz, colabrd
+	dd ddup
+	dd lit, semicol
+	dd lit, 1
+	dd streq
+	dd gotz, colpw
+	dd ddrop
+	dd lit, exit
+	dd dcom
 	dd exit
+colpw	dd ddup
+	dd find
+	dd cdup
+	dd gonz, colgtw
+	dd startsnum
+	dd gotz, innonn
+	dd parsenum
+	dd lit, lit
+	dd dcom
+colwrd	dd dcom
+	dd goto, colmode
+colabrd	dd drop
+colabrt	dd abort
+colgtw	dd rot2
+	dd ddrop
+	dd dup
+	dd dictflags
+	dd lit, 0b100
+	dd band
+	dd gotz, colwrd
+	dd jump
+	dd goto, colmode
 
 ; ( -- )
 DEFWORD bracket, '[', 0b100, colon

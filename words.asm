@@ -715,18 +715,25 @@ DEFWORD allochere, 0b000, load
 
 ; ( n -- )
 DEFWORD alloc, 0b000, allochere
-	call enter
-	dd exit
+	add [here], ebx
+	pop ebx
+	NEXT
 
 ; ( n -- )
 DEFWORD dcom, ',', 0b000, alloc
-	call enter
-	dd exit
+	mov ecx, [here]
+	mov [ecx], ebx
+	add [here], dword 4
+	pop ebx
+	NEXT
 
 ; ( n -- )
 DEFWORD ccom, 'c,', 0b000, dcom
-	call enter
-	dd exit
+	mov ecx, [here]
+	mov [ecx], bl
+	inc dword [here]
+	pop ebx
+	NEXT
 
 ; ( -- )
 DEFWORD colon, ':', 0b000, ccom

@@ -673,17 +673,17 @@ incii	dd dup
 	dd dictflags
 	dd lit, 0b010
 	dd band
-	dd gotz, injmp
-	dd drop
+	dd gonz, innoin
+	dd rot2
+	dd ddrop
+	dd jump
+	dd goto, inmore
+innoin	dd drop
 	dd emits
 	dd lit, intstr
 	dd lit, 17
 	dd emits
 	dd abort
-injmp	dd rot2
-	dd ddrop
-	dd jump
-	dd goto, inmore
 
 ; ( flags str len -- fd )
 ; flags: 0 is read-only, 1 is write-only, 2 is read+write
@@ -799,7 +799,7 @@ DEFWORD colon, ':', 0b000, entercom
 	dd entercom
 colmode	dd getword
 	dd cdup
-	dd gotz, colabrd
+	dd gotz, colabrt
 	dd ddup
 	dd lit, semicol
 	dd lit, 1
@@ -820,8 +820,8 @@ colpw	dd ddup
 	dd dcom
 colwrd	dd dcom
 	dd goto, colmode
-colabrd	dd drop
-colabrt	dd abort
+colabrt	dd drop
+	dd abort
 colgtw	dd rot2
 	dd ddrop
 	dd dup
@@ -833,9 +833,36 @@ colgtw	dd rot2
 	dd goto, colmode
 
 ; ( -- )
+rbrack	db ']'
 DEFWORD bracket, '[', 0b100, colon
 	call enter
+braloop	dd getword
+	dd cdup
+	dd gotz, colabrt
+	dd ddup
+	dd lit, rbrack
+	dd lit, 1
+	dd streq
+	dd gotz, bracpw
+	dd ddrop
 	dd exit
+bracpw	dd ddup
+	dd find
+	dd cdup
+	dd gonz, bragtw
+	dd startsnum
+	dd gotz, innonn
+	dd parsenum
+	dd goto, braloop
+bragtw	dd dup
+	dd dictflags
+	dd lit, 0b010
+	dd band
+	dd gonz, innoin
+	dd rot2
+	dd ddrop
+	dd jump
+	dd goto, braloop
 
 ; ( -- )
 parenc	db ')'

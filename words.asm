@@ -921,8 +921,24 @@ parenl	dd getword
 	dd gotz, parenl
 	dd exit
 
+DEFWORD backslash, '\', 0b100, paren
+	push ebx
+	xor eax, eax
+	mov ebx, [wordfd]
+	mov ecx, wordbuf+255	; last char of wordbuf
+	xor edx, edx
+	inc edx
+bsloo	mov al, 3	; read
+	int 0x80
+	cmp [ecx], byte `\n`
+	je bsend
+	cmp al, 1
+	je bsloo
+bsend	pop ebx
+	NEXT
+
 okstr	db ` ok\n`
-DEFWORD init, 0b000, paren
+DEFWORD init, 0b000, backslash
 	call enter
 	dd lit, okstr
 	dd lit, 4

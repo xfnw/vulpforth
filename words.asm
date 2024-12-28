@@ -270,8 +270,35 @@ badrd	xor ebx, ebx
 	push ebx
 	jmp goodrd
 
+; ( -- str len )
+; adds a lil null termination, as a treat (not included in length)
+; so that its convenient to use with syscalls that take paths etc
+; decrement here after using if you dont want this
+DEFWORD string, '"', 0b000, getword
+	push ebx
+	mov edi, [here]
+	push edi
+	xor eax, eax
+	xor ebx, ebx
+	mov ecx, edi
+	xor edx, edx
+	inc edx
+strread	mov al, 3	; read
+	int 0x80
+	cmp [ecx], byte '"'
+	je strbye
+	inc ecx
+	cmp al, 1
+	je strread
+strbye	mov ebx, ecx
+	sub ebx, edi
+	mov [ecx], byte 0
+	inc ecx
+	mov [here], ecx
+	NEXT
+
 ; ( c -- )
-DEFWORD emit, 0b000, getword
+DEFWORD emit, 0b000, string
 	push ebx
 	xor eax, eax
 	mov al, 4

@@ -212,8 +212,18 @@ DEFWORD decrement, '1-', 0b000, increment
 	sub ebx, 1
 	NEXT
 
+; ( a -- a+4 )
+DEFWORD increment4, '4+', 0b000, decrement
+	add ebx, 4
+	NEXT
+
+; ( a -- a-4 )
+DEFWORD decrement4, '4-', 0b000, increment4
+	sub ebx, 4
+	NEXT
+
 ; ( a b -- a-b )
-DEFWORD minus, '-', 0b000, decrement
+DEFWORD minus, '-', 0b000, decrement4
 	pop eax
 	xchg ebx, eax
 	sub ebx, eax
@@ -503,8 +513,7 @@ DEFWORD dictname, 0b000, dictlen
 ; ( addr -- addr )
 DEFWORD dictprev, 0b000, dictname
 	call enter
-	dd lit, 4
-	dd minus
+	dd decrement4
 	dd dat
 	dd exit
 
@@ -595,8 +604,7 @@ dumploo	dd cdup
 	dd printhex
 	dd lit, ' '
 	dd emit
-	dd lit, 4
-	dd plus
+	dd increment4
 	dd swap
 	dd decrement
 	dd goto, dumploo
@@ -834,8 +842,7 @@ DEFWORD entercom, 'enter,', 0b000, ccom
 	call enter
 	dd lit, enter
 	dd litd, here
-	dd lit, 4
-	dd plus
+	dd increment4
 	dd minus
 	dd dcom
 	dd exit

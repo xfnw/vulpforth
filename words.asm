@@ -826,15 +826,8 @@ DEFWORD entercom, 'enter,', 0b000, ccom
 
 ; ( -- )
 semicol	db ';'
-DEFWORD colon, ':', 0b000, entercom
+DEFWORD colres, ':rs', 0b000, entercom
 	call enter
-	dd getword
-	dd cdup
-	dd gotz, colabrt
-	dd dictcom
-	dd lit, 0xe8
-	dd ccom
-	dd entercom
 colmode	dd getword
 	dd cdup
 	dd gotz, colabrt
@@ -869,6 +862,19 @@ colgtw	dd rot2
 	dd gotz, colwrd
 	dd jump
 	dd goto, colmode
+
+; ( -- )
+DEFWORD colon, ':', 0b000, colres
+	call enter
+	dd getword
+	dd cdup
+	dd gotz, colabrt
+	dd dictcom
+	dd lit, 0xe8
+	dd ccom
+	dd entercom
+	dd colres
+	dd exit
 
 ; ( -- )
 rbrack	db ']'

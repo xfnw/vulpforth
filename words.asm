@@ -534,8 +534,24 @@ DEFWORD dictcom, 'dict,', 0b000, dictflags
 	dd dput
 	dd exit
 
+; ( -- )
+DEFWORD words, 0b000, dictcom
+	call enter
+	dd litd, latest
+wdsloop	dd dup
+	dd dictname
+	dd emits
+	dd lit, ' '
+	dd emit
+	dd dictprev
+	dd cdup
+	dd gonz, wdsloop
+	dd lit, `\n`
+	dd emit
+	dd exit
+
 ; ( str len -- addr )
-DEFWORD find, 0b000, dictcom
+DEFWORD find, 0b000, words
 	call enter
 	dd litd, latest
 findrep	dd rot2

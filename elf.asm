@@ -29,7 +29,7 @@ ehdrsize equ $ - ehdr
 	dd $$		; p_vaddr
 	dd $$		; p_paddr
 	dd filesize	; p_filesz
-	dd filesize	; p_memsz
+	dd resvsize	; p_memsz
 	dd 7		; p_flags
 	dd 0x1000	; p_align
 
@@ -37,4 +37,5 @@ phdrsize equ $ - phdr
 
 ; put this at the end of your program:
 ;filesize equ $ - $$
+;resvsize equ $ - $$
 

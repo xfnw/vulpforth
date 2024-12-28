@@ -59,9 +59,12 @@ restart	mov ebp, retstack	; initialize return stack
 	call enter
 	dd init
 
+filesize equ $ - $$
+
 section .bss
 wordlen resb 1		; length of last read word
 wordbuf resb 256	; last read word
 retstack resd 1024	; the return stack
+defhere resd 1024	; default here location
 
-filesize equ $ - $$
+resvsize equ $ - $$

@@ -13,7 +13,13 @@ DEFWORD lit, 0b010, exit
 	xchg ebx, eax	; put it on the stack
 	NEXT
 
-DEFWORD goto, 0b010, lit
+DEFWORD litd, 0b010, lit
+	push ebx
+	lodsd
+	mov ebx, [eax]	; same thing but dereferenced
+	NEXT
+
+DEFWORD goto, 0b010, litd
 	lodsd		; grab next colon-word token
 	xchg esi, eax	; jump to it
 	NEXT
@@ -458,8 +464,7 @@ DEFWORD dictflags, 0b000, dictprev
 ; ( str len -- addr )
 DEFWORD find, 0b000, dictflags
 	call enter
-	dd lit, latest
-	dd dat
+	dd litd, latest
 findrep	dd rot2
 	dd ddup
 	dd lit, 4

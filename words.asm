@@ -405,8 +405,28 @@ lmemeq	mov dl, [eax+ecx-1]
 	inc ebx
 nmemeq	NEXT
 
+; ( m1 len m2 -- )
+DEFWORD memcpy, 0b000, memeq
+	pop ecx
+	pop eax
+memcl	mov dl, [eax+ecx-1]
+	mov [ebx+ecx-1], dl
+	loop memcl
+	pop ebx
+	NEXT
+
+; ( str len -- )
+DEFWORD strcom, 'str,', 0b000, memcpy
+	call enter
+	dd dup
+	dd rot2
+	dd litd, here
+	dd memcpy
+	dd alloc
+	dd exit
+
 ; ( str1 len1 str2 len2 -- str1==str2 )
-DEFWORD streq, 'str=', 0b000, memeq
+DEFWORD streq, 'str=', 0b000, strcom
 	call enter
 	dd rot
 	dd over

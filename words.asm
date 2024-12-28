@@ -719,28 +719,38 @@ DEFWORD alloc, 0b000, allochere
 	dd exit
 
 ; ( n -- )
-DEFWORD dcom, 0b000, alloc
+DEFWORD dcom, ',', 0b000, alloc
 	call enter
 	dd exit
 
 ; ( n -- )
-DEFWORD ccom, 0b000, dcom
+DEFWORD ccom, 'c,', 0b000, dcom
 	call enter
 	dd exit
 
 ; ( -- )
-DEFWORD colon, 0b000, ccom
+DEFWORD colon, ':', 0b000, ccom
 	call enter
 	dd exit
 
 ; ( -- )
-DEFWORD bracket, 0b100, colon
+DEFWORD bracket, '[', 0b100, colon
 	call enter
 	dd exit
 
 ; ( -- )
-DEFWORD paren, 0b100, bracket
+parenc	db ')'
+DEFWORD paren, '(', 0b100, bracket
 	call enter
+parenl	dd getword
+	dd cdup
+	dd gotz, parenb
+	dd lit, parenc
+	dd lit, 1
+	dd streq
+	dd gotz, parenl
+	dd exit
+parenb	dd drop
 	dd exit
 
 okstr	db ` ok\n`

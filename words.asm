@@ -741,7 +741,18 @@ DEFWORD ccom, 'c,', 0b000, dcom
 	NEXT
 
 ; ( -- )
-DEFWORD colon, ':', 0b000, ccom
+DEFWORD entercom, 'enter,', 0b000, ccom
+	call enter
+	dd lit, enter
+	dd litd, here
+	dd lit, 4
+	dd plus
+	dd minus
+	dd dcom
+	dd exit
+
+; ( -- )
+DEFWORD colon, ':', 0b000, entercom
 	call enter
 	dd exit
 

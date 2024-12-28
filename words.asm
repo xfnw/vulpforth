@@ -93,8 +93,20 @@ DEFWORD ddrop, '2drop', 0b000, drop
 	pop ebx
 	NEXT
 
+; ( a b -- b )
+DEFWORD nip, 0b000, ddrop
+	pop eax
+	NEXT
+
+; ( a b -- b a b )
+DEFWORD tuck, 0b000, nip
+	pop eax
+	push ebx
+	push eax
+	NEXT
+
 ; ( a -- a a )
-DEFWORD dup, 0b000, ddrop
+DEFWORD dup, 0b000, tuck
 	push ebx
 	NEXT
 
@@ -120,8 +132,19 @@ DEFWORD swap, 0b000, ddup
 	push eax
 	NEXT
 
+; ( a b c d -- c d a b )
+DEFWORD dswap, '2swap', 0b000, swap
+	pop eax
+	pop ecx
+	pop edx
+	push eax
+	push ebx
+	push edx
+	xchg ebx, ecx
+	NEXT
+
 ; ( a -- stack[a] )
-DEFWORD nth, 0b000, swap
+DEFWORD nth, 0b000, dswap
 	mov ebx, [esp+ebx*4]
 	NEXT
 

@@ -290,7 +290,7 @@ DEFWORD string, '"', 0b000, getword
 	mov edi, [here]
 	push edi
 	xor eax, eax
-	xor ebx, ebx
+	mov ebx, [wordfd]
 	mov ecx, edi
 	xor edx, edx
 	inc edx
@@ -572,7 +572,7 @@ wnowc	dd exit
 DEFWORD dump, 0b000, wordchar
 	call enter
 dumploo	dd cdup
-	dd gotz, dumpbye
+	dd gotz, dbye
 	dd swap
 	dd dup
 	dd dat
@@ -584,7 +584,7 @@ dumploo	dd cdup
 	dd swap
 	dd decrement
 	dd goto, dumploo
-dumpbye	dd drop
+dbye	dd drop
 	dd exit
 
 ; ( -- h )
@@ -684,7 +684,7 @@ DEFWORD chkstack, 0b000, parsenum
 cstkok	NEXT
 
 wnfstr	db ' word not found'
-intstr	db ' noninterpretable'
+intstr	db ' nointerpret'
 DEFWORD interpreter, 0b000, chkstack
 	call enter
 inmore	dd chkstack
@@ -719,7 +719,7 @@ incii	dd dup
 innoin	dd drop
 	dd emits
 	dd lit, intstr
-	dd lit, 17
+	dd lit, 12
 	dd emits
 	dd abort
 
@@ -914,13 +914,11 @@ DEFWORD paren, '(', 0b100, bracket
 	call enter
 parenl	dd getword
 	dd cdup
-	dd gotz, parenb
+	dd gotz, dbye
 	dd lit, parenc
 	dd lit, 1
 	dd streq
 	dd gotz, parenl
-	dd exit
-parenb	dd drop
 	dd exit
 
 okstr	db ` ok\n`

@@ -773,12 +773,16 @@ DEFWORD open, 0b000, interpreter
 	dd exit
 
 ; ( fd -- )
+badfd	db 'bad fd'
 DEFWORD close, 0b000, open
 	call enter
 	dd lit, 6	; close
 	dd ddup		; fill extra stuff with nonsense
 	dd syscall
 	dd gotz, clexit
+	dd lit, badfd
+	dd lit, 6
+	dd emits
 	dd abort
 clexit	dd exit
 

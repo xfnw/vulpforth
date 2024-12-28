@@ -179,8 +179,19 @@ DEFWORD bor, 'or', 0b000, band
 	or ebx, eax
 	NEXT
 
+; ( a b -- a^b )
+DEFWORD bxor, 'xor', 0b000, bor
+	pop eax
+	xor ebx, eax
+	NEXT
+
+; ( a -- !a )
+DEFWORD bnot, 'not', 0b000, bxor
+	not ebx
+	NEXT
+
 ; ( a b -- a+b )
-DEFWORD plus, '+', 0b000, bor
+DEFWORD plus, '+', 0b000, bnot
 	pop eax
 	add ebx, eax
 	NEXT

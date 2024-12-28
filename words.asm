@@ -88,7 +88,7 @@ DEFWORD drop, 0b000, dover
 	NEXT
 
 ; ( a a -- )
-DEFWORD ddrop, 0b000, drop
+DEFWORD ddrop, '2drop', 0b000, drop
 	pop ebx
 	pop ebx
 	NEXT
@@ -434,8 +434,7 @@ DEFWORD streq, 'str=', 0b000, strcom
 	dd gotz, nstreq
 	dd memeq
 	dd exit
-nstreq	dd drop
-	dd drop
+nstreq	dd ddrop
 	dd drop
 	dd lit, 0
 	dd exit

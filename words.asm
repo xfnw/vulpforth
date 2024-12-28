@@ -15,7 +15,7 @@ DEFWORD lit, 0b010, exit
 
 DEFWORD goto, 0b010, lit
 	lodsd		; grab next colon-word token
-	add esi, eax	; offset it
+	xchg esi, eax	; jump to it
 	NEXT
 
 DEFWORD gotz, 0b010, goto
@@ -23,7 +23,7 @@ DEFWORD gotz, 0b010, goto
 	pop ebx		; consume it
 	lodsd		; grab next colon-word token
 	jnz notgon	; skip if not zero
-	add esi, eax	; offset it
+	xchg esi, eax	; jump to it
 notgon	NEXT
 
 DEFWORD gonz, 0b010, goto
@@ -31,7 +31,7 @@ DEFWORD gonz, 0b010, goto
 	pop ebx		; consume it
 	lodsd		; grab next colon-word token
 	jz yesgon	; skip if zero
-	add esi, eax	; offset it
+	xchg esi, eax	; jump to it
 yesgon	NEXT
 
 ; ( a -- )
@@ -357,7 +357,7 @@ DEFWORD print, '.', 0b000, printhex
 	dd swap
 	dd dup
 	dd isneg
-	dd gotz, pnotn - $ - 8
+	dd gotz, pnotn
 	dd lit, '-'
 	dd emit
 pnotn	dd lit, 10
@@ -367,12 +367,12 @@ pnotn	dd lit, 10
 	dd plus
 	dd swap
 	dd cdup
-	dd gonz, pnotn - $ - 8
+	dd gonz, pnotn
 pprint	dd emit
 	dd dup
 	dd lit, -1
 	dd eq
-	dd gotz, pprint - $ - 8
+	dd gotz, pprint
 	dd drop
 	dd exit
 
@@ -405,7 +405,7 @@ DEFWORD streq, 'str=', 0b000, memeq
 	dd rot
 	dd over
 	dd eq
-	dd gotz, nstreq - $ - 8
+	dd gotz, nstreq
 	dd memeq
 	dd exit
 nstreq	dd drop
@@ -466,11 +466,11 @@ findrep	dd rot2
 	dd nth
 	dd dictname
 	dd streq
-	dd gonz, findbye - $ - 8
+	dd gonz, findbye
 	dd rot
 	dd dictprev
 	dd dup
-	dd gonz, findrep - $ - 8
+	dd gonz, findrep
 	dd rot2
 findbye	dd ddrop
 	dd exit
@@ -486,7 +486,7 @@ DEFWORD wordaddr, `'`, 0b000, find
 DEFWORD wordchar, `''`, 0b000, wordaddr
 	call enter
 	dd getword
-	dd gotz, wnowc - $ - 8
+	dd gotz, wnowc
 	dd cat
 wnowc	dd exit
 
@@ -494,7 +494,7 @@ wnowc	dd exit
 DEFWORD dump, 0b000, wordchar
 	call enter
 dumploo	dd cdup
-	dd gotz, dumpbye - $ - 8
+	dd gotz, dumpbye
 	dd swap
 	dd dup
 	dd dat
@@ -505,7 +505,7 @@ dumploo	dd cdup
 	dd plus
 	dd swap
 	dd decrement
-	dd goto, dumploo - $ - 8
+	dd goto, dumploo
 dumpbye	dd drop
 	dd exit
 
@@ -613,17 +613,17 @@ inmore	dd chkstack
 	dd getword
 	dd ddup
 	dd dup
-	dd gonz, innote - $ - 8
+	dd gonz, innote
 	dd ddrop
 	dd ddrop
 	dd exit
 innote	dd find
 	dd cdup
-	dd gonz, incii - $ - 8
+	dd gonz, incii
 	dd startsnum
-	dd gotz, innonn - $ - 8
+	dd gotz, innonn
 	dd parsenum
-	dd goto, inmore - $ - 8
+	dd goto, inmore
 innonn	dd emits
 	dd lit, wnfstr
 	dd lit, 15
@@ -633,7 +633,7 @@ incii	dd dup
 	dd dictflags
 	dd lit, 0b010
 	dd band
-	dd gotz, injmp - $ - 8
+	dd gotz, injmp
 	dd drop
 	dd emits
 	dd lit, intstr
@@ -643,7 +643,7 @@ incii	dd dup
 injmp	dd rot2
 	dd ddrop
 	dd jump
-	dd goto, inmore - $ - 8
+	dd goto, inmore
 
 ; ( flags str len -- fd )
 ; flags: 0 is read-only, 1 is write-only, 2 is read+write
@@ -668,7 +668,7 @@ DEFWORD close, 0b000, open
 	dd lit, 6	; close
 	dd ddup		; fill extra stuff with nonsense
 	dd syscall
-	dd gotz, clexit - $ - 8
+	dd gotz, clexit
 	dd abort
 clexit	dd exit
 

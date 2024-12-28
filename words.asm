@@ -481,8 +481,24 @@ DEFWORD dictflags, 0b000, dictprev
 	dd rshift
 	dd exit
 
+; ( str len -- )
+DEFWORD dictcom, 'dict,', 0b000, dictflags
+	call enter
+	dd dup
+	dd rot2
+	dd strcom
+	dd lit, 0b00011111
+	dd band
+	dd ccom
+	dd litd, latest
+	dd dcom
+	dd litd, here
+	dd lit, latest
+	dd dput
+	dd exit
+
 ; ( str len -- addr )
-DEFWORD find, 0b000, dictflags
+DEFWORD find, 0b000, dictcom
 	call enter
 	dd litd, latest
 findrep	dd rot2

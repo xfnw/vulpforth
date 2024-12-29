@@ -694,7 +694,7 @@ DEFWORD abort, 0b000, bye
 	dd restart
 
 ; ( str len -- str len b )
-DEFWORD startsnum, '?startsnum', 0b000, abort
+DEFWORD startsnum, '?num', 0b000, abort
 	pop edx
 	push edx
 	push ebx
@@ -751,7 +751,7 @@ cstkok	NEXT
 
 wnfstr	db ' word not found'
 intstr	db ' nointerpret'
-DEFWORD interpreter, 0b000, chkstack
+DEFWORD repl, 0b000, chkstack
 	call enter
 inmore	dd chkstack
 	dd getword
@@ -791,7 +791,7 @@ innoin	dd drop
 
 ; ( flags str len -- fd )
 ; flags: 0 is read-only, 1 is write-only, 2 is read+write
-DEFWORD open, 0b000, interpreter
+DEFWORD open, 0b000, repl
 	call enter
 	dd swap
 	dd dup
@@ -828,7 +828,7 @@ DEFWORD loadfrom, 0b000, close
 	dd open
 	dd lit, wordfd
 	dd dput
-	dd interpreter
+	dd repl
 	dd lit, wordfd
 	dd dup
 	dd dat
@@ -1024,5 +1024,5 @@ DEFWORD init, 0b000, backslash
 	dd lit, okstr
 	dd lit, 4
 	dd emits
-	dd interpreter
+	dd repl
 	dd bye

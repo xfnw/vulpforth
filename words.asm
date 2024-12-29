@@ -176,14 +176,14 @@ DEFWORD syscall6, 0b000, syscall
 	pop ebp
 	NEXT
 
-; ( a b == a<<b )
+; ( a b -- a<<b )
 DEFWORD lshift, 0b000, syscall6
 	pop ecx
 	xchg ebx, ecx
 	shl ebx, cl
 	NEXT
 
-; ( a b == a>>b )
+; ( a b -- a>>b )
 DEFWORD rshift, 0b000, lshift
 	pop ecx
 	xchg ebx, ecx

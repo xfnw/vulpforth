@@ -562,9 +562,12 @@ DEFWORD dictflags, 0b000, dictprev
 	dd rshift
 	dd exit
 
-; ( str len -- )
+; ( -- )
 DEFWORD dictcom, 'dict,', 0b000, dictflags
 	call enter
+	dd getword
+	dd cdup
+	dd gotz, colabrt
 	dd dup
 	dd rot2
 	dd strcom
@@ -578,8 +581,16 @@ DEFWORD dictcom, 'dict,', 0b000, dictflags
 	dd dput
 	dd exit
 
+; ( flags -- )
+DEFWORD dictor, 0b000, dictcom
+	mov eax, [latest]
+	shl ebx, 5
+	or [eax-5], bl
+	pop ebx
+	NEXT
+
 ; ( -- )
-DEFWORD words, 0b000, dictcom
+DEFWORD words, 0b000, dictor
 	call enter
 	dd litd, latest
 wdsloop	dd dup
@@ -924,9 +935,6 @@ colgtw	dd rot2
 ; ( -- )
 DEFWORD colon, ':', 0b000, colres
 	call enter
-	dd getword
-	dd cdup
-	dd gotz, colabrt
 	dd dictcom
 	dd lit, 0xe8
 	dd ccom
@@ -935,8 +943,23 @@ DEFWORD colon, ':', 0b000, colres
 	dd exit
 
 ; ( -- )
+DEFWORD create, 0b000, colon
+	call enter
+	dd dictcom
+	dd lit, 2
+	dd dictor
+	dd exit
+
+; ( -- )
+DEFWORD immediate, 0b000, create
+	push ebx
+	xor ebx, ebx
+	mov bl, 4
+	jmp dictor
+
+; ( -- )
 rbrack	db ']'
-DEFWORD bracket, '[', 0b100, colon
+DEFWORD bracket, '[', 0b100, immediate
 	call enter
 braloop	dd getword
 	dd cdup

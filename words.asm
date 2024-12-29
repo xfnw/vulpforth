@@ -855,7 +855,7 @@ DEFWORD load, 0b000, loadfrom
 	dd exit
 
 ; ( n -- )
-DEFWORD allochere, 0b000, load
+DEFWORD newhere, 0b000, load
 	call enter
 	dd lit, 0	; no offset
 	dd lit, -1	; anonymous fd
@@ -871,7 +871,7 @@ DEFWORD allochere, 0b000, load
 	dd exit
 
 ; ( n -- )
-DEFWORD alloc, 0b000, allochere
+DEFWORD alloc, 0b000, newhere
 	add [here], ebx
 	pop ebx
 	NEXT
@@ -1027,7 +1027,6 @@ bsloo	mov al, 3	; read
 bsend	pop ebx
 	NEXT
 
-vstr	db 'vulpforth says h'
 okstr	db ` ok\n`
 DEFWORD init, 0b000, backslash
 	call enter

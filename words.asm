@@ -472,11 +472,20 @@ DEFWORD eq, '=', 0b000, print
 	xor ebx, ebx
 	cmp eax, edx
 	jne eqneq
-	inc ebx
+eqieq	inc ebx
 eqneq	NEXT
 
+; ( a b -- a>b )
+DEFWORD gt, '>', 0b000, eq
+	pop eax
+	xchg edx, ebx
+	xor ebx, ebx
+	cmp eax, edx
+	jg eqieq
+	NEXT
+
 ; ( m1 m2 len -- m1==m2 )
-DEFWORD memeq, 'mem=', 0b000, eq
+DEFWORD memeq, 'mem=', 0b000, gt
 	xchg ecx, ebx
 	xor ebx, ebx
 	pop eax

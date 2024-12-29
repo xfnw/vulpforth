@@ -4,6 +4,7 @@
 ; $Fur: elf.asm 2024-02-29T18:33:57Z xfnw $
 
 BITS 32
+%ifidn __OUTPUT_FORMAT__, bin
 	org 0x08048000
 
 ehdr:					; Elf32_Ehdr
@@ -34,6 +35,7 @@ ehdrsize equ $ - ehdr
 	dd 0x1000	; p_align
 
 phdrsize equ $ - phdr
+%endif
 
 ; put this at the end of your program:
 ;filesize equ $ - $$

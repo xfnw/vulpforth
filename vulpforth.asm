@@ -45,7 +45,9 @@ DEFWORD %1, %str(%1), %2, %3
 	mov [ebp], %1	; take value from top of return stack
 %endmacro
 
+%ifidn __OUTPUT_FORMAT__, elf
 section .data
+%endif
 
 %include "vars.asm"
 

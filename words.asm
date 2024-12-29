@@ -298,9 +298,9 @@ readchr	xor edx, edx
 	cmp eax, 1		; did it error?
 	jne badrd		; yes, give failed
 	mov al, [ecx]		; no, lets check it
-	imul eax, 0xf641ae81
-	and eax, 0xa00ac010
-	cmp eax, 0x8000c000	; is whitespace?
+	imul eax, 0x020268f8
+	and eax, 0xa1201040
+	cmp eax, 0x00001000	; is whitespace?
 	jne readchr		; no, loop some more
 	mov ebx, wordbuf
 	cmp ecx, ebx		; is /only/ whitespace?

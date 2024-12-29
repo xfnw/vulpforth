@@ -45,10 +45,13 @@ DEFWORD %1, %str(%1), %2, %3
 	add ebp, 4	; increment top of return stack
 %endmacro
 
-section .text
-global _start
+section .data
 
 %include "vars.asm"
+
+section .text
+	global _start
+
 %include "words.asm"
 
 _start:

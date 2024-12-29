@@ -32,7 +32,7 @@ DEFWORD gotz, 0b010, goto
 	xchg esi, eax	; jump to it
 notgon	NEXT
 
-DEFWORD gonz, 0b010, goto
+DEFWORD gonz, 0b010, gotz
 	cmp ebx, 0	; check if top of stack is 0
 	pop ebx		; consume it
 	lodsd		; grab next colon-word token

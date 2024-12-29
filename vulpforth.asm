@@ -36,13 +36,13 @@ DEFWORD %1, %str(%1), %2, %3
 %endmacro
 
 %macro POPRET 1
-	add ebp, -4	; decrement top of return stack
 	mov %1, [ebp]	; take value from top of return stack
+	add ebp, 4	; increment top of return stack
 %endmacro
 
 %macro PUSHRET 1
+	add ebp, -4	; decrement top of return stack
 	mov [ebp], %1	; take value from top of return stack
-	add ebp, 4	; increment top of return stack
 %endmacro
 
 section .data
@@ -56,7 +56,7 @@ section .text
 
 _start:
 	mov [stackstart], esp	; keep initial stack position
-restart	mov ebp, retstack	; initialize return stack
+restart	mov ebp, retstack+retsz	; initialize return stack
 	mov [wordfd], dword 0	; read words from stdin
 	cld			; set direction to forwards
 	call enter
@@ -68,6 +68,10 @@ section .bss
 wordlen resb 1		; length of last read word
 wordbuf resb 256	; last read word
 retstack resd 1024	; the return stack
-defhere resd 1024	; default here location
+retsz equ $ - retstack
+
+; silly hack to get our p_memsz aligned
+alignb 4096
+resb 1
 
 resvsize equ $ - $$

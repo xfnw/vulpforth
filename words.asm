@@ -594,8 +594,22 @@ DEFWORD dictor, 0b000, dictcom
 	pop ebx
 	NEXT
 
+; ( -- )
+DEFWORD words, 0b000, dictor
+	call enter
+	dd litat, latest
+wdsloop	dd dup
+	dd dictname
+	dd emits
+	dd spc
+	dd dictprev
+	dd cdup
+	dd gonz, wdsloop
+	dd nl
+	dd exit
+
 ; ( str len -- addr )
-DEFWORD find, 0b000, dictor
+DEFWORD find, 0b000, words
 	call enter
 	dd litat, latest
 findrep	dd rot2
@@ -1015,7 +1029,7 @@ bsloo	mov al, 3	; read
 bsend	pop ebx
 	NEXT
 
-vstr	db 'vulpforth says hhhh aaaa'
+vstr	db ':3'
 okstr	db ` ok\n`
 DEFWORD init, 0b000, backslash
 	call enter

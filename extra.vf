@@ -16,7 +16,3 @@
 	compile gonz , , ; immediate
 : until ( a -- ) \ turns into ( b -- )
 	compile gotz , , ; immediate
-
-: words compile@ latest begin
-	dup dictname emits spc
-	dictprev ?dup while nl ;

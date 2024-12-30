@@ -13,13 +13,19 @@ DEFWORD lit, 0b010, exit
 	xchg ebx, eax	; put it on the stack
 	NEXT
 
-DEFWORD litd, 0b010, lit
+DEFWORD litat, 'lit@', 0b010, lit
 	push ebx
 	lodsd
 	mov ebx, [eax]	; same thing but dereferenced
 	NEXT
 
-DEFWORD goto, 0b010, litd
+DEFWORD litput, 'lit!', 0b010, litat
+	lodsd
+	mov [eax], ebx
+	pop ebx
+	NEXT
+
+DEFWORD goto, 0b010, litput
 	lodsd		; grab next colon-word token
 	xchg esi, eax	; jump to it
 	NEXT
@@ -512,7 +518,7 @@ DEFWORD strcom, 'str,', 0b000, memcpy
 	call enter
 	dd dup
 	dd rot2
-	dd litd, here
+	dd litat, here
 	dd memcpy
 	dd alloc
 	dd exit
@@ -583,11 +589,10 @@ DEFWORD dictcom, 'dict,', 0b000, dictflags
 	dd lit, 0b00011111
 	dd band
 	dd ccom
-	dd litd, latest
+	dd litat, latest
 	dd dcom
-	dd litd, here
-	dd lit, latest
-	dd dput
+	dd litat, here
+	dd litput, latest
 	dd exit
 
 ; ( flags -- )
@@ -601,7 +606,7 @@ DEFWORD dictor, 0b000, dictcom
 ; ( str len -- addr )
 DEFWORD find, 0b000, dictor
 	call enter
-	dd litd, latest
+	dd litat, latest
 findrep	dd rot2
 	dd ddup
 	dd lit, 4
@@ -832,16 +837,12 @@ DEFWORD loadfrom, 0b000, close
 	dd lit, 0	; read-only
 	dd rot2
 	dd open
-	dd lit, wordfd
-	dd dput
+	dd litput, wordfd
 	dd repl
-	dd lit, wordfd
-	dd dup
-	dd dat
+	dd litat, wordfd
 	dd close
 	dd lit, 0
-	dd swap
-	dd dput
+	dd litput, wordfd
 	dd exit
 
 ; ( -- )
@@ -863,8 +864,7 @@ DEFWORD newhere, 0b000, load
 	dd lit, 0	; let kernel choose location
 	dd lit, 192	; mmap2 (AAAAAAAAAAAAAAAAAA)
 	dd syscall6
-	dd lit, here
-	dd dput
+	dd litput, here
 	dd exit
 
 ; ( n -- )
@@ -893,7 +893,7 @@ DEFWORD ccom, 'c,', 0b000, dcom
 DEFWORD entercom, 'enter,', 0b000, ccom
 	call enter
 	dd lit, enter
-	dd litd, here
+	dd litat, here
 	dd increment4
 	dd minus
 	dd dcom
@@ -1024,7 +1024,7 @@ bsloo	mov al, 3	; read
 bsend	pop ebx
 	NEXT
 
-vstr	db 'vulpforth says hhhh!'
+vstr	db 'vulpforth says hhhh aaaa'
 okstr	db ` ok\n`
 DEFWORD init, 0b000, backslash
 	call enter

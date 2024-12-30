@@ -537,25 +537,16 @@ nstreq	dd ddrop
 	dd lit, 0
 	dd exit
 
-; ( addr -- len )
-DEFWORD dictlen, 0b000, streq
+; ( addr -- str len )
+DEFWORD dictname, 0b000, streq
 	call enter
 	dd lit, 5
 	dd minus
+	dd dup
 	dd cat
 	dd lit, 0b00011111
 	dd band
-	dd exit
-
-; ( addr -- str len )
-DEFWORD dictname, 0b000, dictlen
-	call enter
-	dd dup
-	dd dictlen
-	dd dup
-	dd rot
-	dd minusinv
-	dd lit, 5
+	dd tuck
 	dd minus
 	dd swap
 	dd exit

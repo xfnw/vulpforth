@@ -621,7 +621,12 @@ findbye	dd ddrop
 DEFWORD wordaddr, `'`, 0b000, find
 	call enter
 	dd getword
+	dd ddup
 	dd find
+	dd cdup
+	dd gotz, innonn
+	dd rot2
+	dd ddrop
 	dd exit
 
 ; ( -- b )

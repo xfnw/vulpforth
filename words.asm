@@ -1024,6 +1024,7 @@ bsloo	mov al, 3	; read
 bsend	pop ebx
 	NEXT
 
+vstr	db 'vulpforth says hhhh!'
 okstr	db ` ok\n`
 DEFWORD init, 0b000, backslash
 	call enter

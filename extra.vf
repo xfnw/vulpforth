@@ -1,0 +1,21 @@
+: compile lit [ ' lit , ] , ' , ; immediate
+: compiled compile litd , ' , ; immediate
+
+: if ( -- a ) \ turns into ( b -- )
+	compile gotz , compiled here 0 , ; immediate
+: else ( a -- a )
+	compile goto , compiled here 0 ,
+	dup 4+ rot ! ; immediate
+: then ( a -- )
+	compiled here swap ! ; immediate
+
+: begin ( -- a )
+	compiled here ; immediate
+: while ( a -- ) \ turns into ( b -- )
+	compile gonz , , ; immediate
+: until ( a -- ) \ turns into ( b -- )
+	compile gotz , , ; immediate
+
+: words compiled latest begin
+	dup dictname emits spc
+	dictprev ?dup while nl ;

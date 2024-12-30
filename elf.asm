@@ -30,7 +30,7 @@ ehdrsize equ $ - ehdr
 	dd $$		; p_vaddr
 	dd $$		; p_paddr
 	dd filesize	; p_filesz
-	dd resvsize	; p_memsz
+	dd resvsize + 1	; p_memsz
 	dd 7		; p_flags
 	dd 0x1000	; p_align
 

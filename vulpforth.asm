@@ -69,11 +69,10 @@ filesize equ $ - $$
 section .bss
 wordlen resb 1		; length of last read word
 wordbuf resb 256	; last read word
+
+defhere alignb 4096
+
 retstack resd 1024	; the return stack
 retsz equ $ - retstack
-
-; silly hack to get our p_memsz aligned
-alignb 4096
-resb 1
 
 resvsize equ $ - $$

@@ -693,8 +693,14 @@ DEFWORD abort, 0b000, bye
 	dd emits
 	dd restart
 
+; ( a -- a )
+DEFWORD cabort, '?abort', 0b000, abort
+	cmp ebx, 0
+	jz abort
+	NEXT
+
 ; ( str len -- str len b )
-DEFWORD startsnum, '?num', 0b000, abort
+DEFWORD startsnum, '?num', 0b000, cabort
 	pop edx
 	push edx
 	push ebx

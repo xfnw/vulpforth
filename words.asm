@@ -598,22 +598,8 @@ DEFWORD dictor, 0b000, dictcom
 	pop ebx
 	NEXT
 
-; ( -- )
-DEFWORD words, 0b000, dictor
-	call enter
-	dd litd, latest
-wdsloop	dd dup
-	dd dictname
-	dd emits
-	dd spc
-	dd dictprev
-	dd cdup
-	dd gonz, wdsloop
-	dd nl
-	dd exit
-
 ; ( str len -- addr )
-DEFWORD find, 0b000, words
+DEFWORD find, 0b000, dictor
 	call enter
 	dd litd, latest
 findrep	dd rot2

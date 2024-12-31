@@ -13,3 +13,6 @@ vulpforth: elf.asm words.asm vars.asm
 
 %: %.o
 	ld -m elf_i386 -o $@ $<
+
+clean:
+	rm -f vulpforth.bin vulpforth.o vulpforth

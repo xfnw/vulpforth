@@ -4,6 +4,8 @@
 
 : if ( -- a ) \ turns into ( b -- )
 	compile gotz , compile@ here 0 , ; immediate
+: !if ( -- a ) \ turns into ( b -- )
+	compile gonz , compile@ here 0 , ; immediate
 : else ( a -- a )
 	compile goto , compile@ here 0 ,
 	dup 4+ rot ! ; immediate
@@ -19,7 +21,6 @@
 
 : [then] ( -- ) ;
 : [if] ( b -- )
-	if exit then
-	begin word
+	!if begin word
 	lit [ ' [then] dictname swap , ] lit [ , ]
-	str= until ;
+	str= until then ;

@@ -16,3 +16,10 @@
 	compile gonz , , ; immediate
 : until ( a -- ) \ turns into ( b -- )
 	compile gotz , , ; immediate
+
+: [then] ( -- ) ;
+: [if] ( b -- )
+	if exit then
+	begin word
+	lit [ ' [then] dictname swap , ] lit [ , ]
+	str= until ;

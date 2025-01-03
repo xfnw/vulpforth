@@ -24,3 +24,7 @@
 	!if begin word
 	lit [ ' [then] dictname swap , ] lit [ , ]
 	str= until then ;
+
+: sigcatch ( -- )
+	0 compile abort 11 48 syscall
+	compile abort 2 48 syscall drop ;

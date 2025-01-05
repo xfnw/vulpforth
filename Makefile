@@ -16,7 +16,7 @@ files.zip: *.vf
 	zip $@ $^
 
 vulpforthzip: vulpforthzip.o zipfd.o
-	ld -m elf_i386 ${LDFLAGS} ${LIBS} -o $@ $^
+	${LD} -m elf_i386 ${LDFLAGS} ${LIBS} -o $@ $^
 
 vulpforthzip.o: vulpforth.asm elf.asm words.asm vars.asm
 	nasm -f elf -F dwarf -g -dZIPAPP -o $@ $<
@@ -32,7 +32,7 @@ zipfd.o: zipfd.c
 	nasm -f elf -F dwarf -g $<
 
 %: %.o
-	ld -m elf_i386 -o $@ $<
+	${LD} -m elf_i386 -o $@ $<
 
 clean:
 	rm -f *.bin *.o *.zip vulpforth vulpforthzip

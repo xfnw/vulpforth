@@ -53,10 +53,17 @@ section .data
 
 section .text
 	global _start
+%ifdef ZIPAPP
+	extern zipfd_init
+	extern zipfd_open
+%endif
 
 %include "words.asm"
 
 _start:
+%ifdef ZIPAPP
+	call zipfd_init
+%endif
 	mov [stackstart], esp	; keep initial stack position
 restart	mov ebp, retstack+retsz	; initialize return stack
 	mov [wordfd], dword 0	; read words from stdin

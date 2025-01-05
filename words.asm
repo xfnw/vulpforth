@@ -808,6 +808,13 @@ innoin	dd drop
 ; ( flags str len -- fd )
 ; flags: 0 is read-only, 1 is write-only, 2 is read+write
 DEFWORD open, 0b000, repl
+%ifdef ZIPAPP
+	push ebx
+	call zipfd_open
+	add esp, 4*3	; throw away stack items fed to c
+	xchg ebx, eax
+	NEXT
+%else
 	call enter
 	dd swap
 	dd dup
@@ -821,6 +828,7 @@ DEFWORD open, 0b000, repl
 	dd lit, 5	; open
 	dd syscall
 	dd exit
+%endif
 
 ; ( fd -- )
 badfd	db 'bad fd'

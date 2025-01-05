@@ -2,7 +2,7 @@ all: vulpforth.bin
 
 vulpforth.bin: elf.asm words.asm vars.asm
 
-vulpforth: elf.asm words.asm vars.asm
+vulpforth.o: elf.asm words.asm vars.asm
 
 %.bin: %.asm
 	nasm -f bin -o $@ $<

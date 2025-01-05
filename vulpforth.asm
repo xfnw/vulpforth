@@ -63,6 +63,16 @@ section .text
 _start:
 %ifdef ZIPAPP
 	call zipfd_init
+	; linking a c object makes the bss section stop being
+	; executable, set it executable ourself with mprotect
+	; FIXME: figure out how to not need this
+	xor eax, eax
+	mov al, 125			; mprotect
+	mov ebx, wordlen		; start of bss
+	mov ecx, retstack+retsz-wordlen	; length of bss
+	xor edx, edx
+	mov dl, 7	; PROT_READ|PROT_WRITE|PROT_EXEC
+	int 0x80
 %endif
 	mov [stackstart], esp	; keep initial stack position
 restart	mov ebp, retstack+retsz	; initialize return stack

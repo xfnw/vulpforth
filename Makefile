@@ -1,5 +1,5 @@
 LDFLAGS ?= -L/usr/lib32 -I/usr/lib32/ld-linux.so.2
-LIBS ?= -lc -lzip
+LIBS ?= -lc
 
 all: vulpforth.bin
 
@@ -15,14 +15,14 @@ vulpforth.zip: vulpforthzip files.zip
 files.zip: *.vf
 	zip $@ $^
 
-vulpforthzip: vulpforthzip.o zipfd.o
+vulpforthzip: vulpforthzip.o zipfd.o zip/src/zip.o
 	${LD} -m elf_i386 ${LDFLAGS} ${LIBS} -o $@ $^
 
 vulpforthzip.o: vulpforth.asm elf.asm words.asm vars.asm
 	nasm -f elf -F dwarf -g -dZIPAPP -o $@ $<
 
-zipfd.o: zipfd.c
-	${CC} -m32 -c -fno-stack-protector ${CFLAGS} -o zipfd.o zipfd.c
+%.o: %.c
+	${CC} -m32 -c -fno-stack-protector ${CFLAGS} -o $@ $<
 
 %.bin: %.asm
 	nasm -f bin -o $@ $<
@@ -35,4 +35,4 @@ zipfd.o: zipfd.c
 	${LD} -m elf_i386 -o $@ $<
 
 clean:
-	rm -f *.bin *.o *.zip vulpforth vulpforthzip
+	rm -f *.bin *.o *.zip vulpforth vulpforthzip zip/src/zip.o

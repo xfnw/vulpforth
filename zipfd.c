@@ -4,20 +4,17 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <unistd.h>
-#include <zip.h>
+#include "zip/src/zip.h"
 
-static zip_t *z;
+static struct zip_t *z;
 
 extern void zipfd_init(void) {
 	int e = 0;
-	z = zip_open("/proc/self/exe", ZIP_RDONLY, &e);
+	z = zip_open("/proc/self/exe", 0, 'r');
 	if (z == NULL) {
-		zip_error_t err;
-		zip_error_init_with_code(&err, e);
 		fprintf(stderr,
-			"cannot open zip (you do have /proc, yes?): %s\n",
-			zip_error_strerror(&err));
-		zip_error_fini(&err);
+			"cannot open zip (you do have /proc, yes?)\n"
+			);
 		exit(1);
 	}
 }
@@ -27,17 +24,17 @@ extern void zipfd_init(void) {
 extern int zipfd_open(int len, char *name, int flags) {
 	name[len] = '\0';
 
-	zip_file_t *file = zip_fopen(z, name, 0);
-	if (file == NULL)
+	if (zip_entry_open(z, name) != 0)
 		return -1;
 
-	char buf[4096];
-	int l, myfd = memfd_create(name, 0);
-	while ((l = zip_fread(file, buf, sizeof buf)) != 0)
-		write(myfd, buf, l);
+	void *buf;
+	size_t size;
+	int myfd = memfd_create(name, 0);
+	zip_entry_read(z, &buf, &size);
+	write(myfd, buf, size);
 
 	lseek(myfd, 0, SEEK_SET);
-	zip_fclose(file);
+	zip_entry_close(z);
 
 	return myfd;
 }

@@ -22,7 +22,7 @@ vulpforthzip.o: vulpforth.asm elf.asm words.asm vars.asm
 	nasm -f elf -F dwarf -g -dZIPAPP -o $@ $<
 
 zipfd.o: zipfd.c
-	${CC} -m32 -c -fno-stack-protector -o zipfd.o zipfd.c
+	${CC} -m32 -c -fno-stack-protector ${CFLAGS} -o zipfd.o zipfd.c
 
 %.bin: %.asm
 	nasm -f bin -o $@ $<

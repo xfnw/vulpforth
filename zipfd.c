@@ -9,7 +9,6 @@
 static struct zip_t *z;
 
 extern void zipfd_init(void) {
-	int e = 0;
 	z = zip_open("/proc/self/exe", 0, 'r');
 	if (z == NULL) {
 		fprintf(stderr,

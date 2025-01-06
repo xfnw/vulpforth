@@ -1,6 +1,3 @@
-LDFLAGS ?= -L/usr/lib32 -I/usr/lib32/ld-linux.so.2
-LIBS ?= -lc
-
 all: vulpforth.bin
 
 vulpforth.bin: elf.asm words.asm vars.asm
@@ -16,13 +13,13 @@ files.zip: *.vf
 	zip $@ $^
 
 vulpforthzip: vulpforthzip.o zipfd.o zip/src/zip.o
-	${LD} -m elf_i386 ${LDFLAGS} ${LIBS} -o $@ $^
+	${CC} -m32 -static ${CFLAGS} -o $@ $^ ${LDFLAGS}
 
 vulpforthzip.o: vulpforth.asm elf.asm words.asm vars.asm
 	nasm -f elf -F dwarf -g -dZIPAPP -o $@ $<
 
 %.o: %.c
-	${CC} -m32 -c -fno-stack-protector ${CFLAGS} -o $@ $<
+	${CC} -m32 -c ${CFLAGS} -o $@ $<
 
 %.bin: %.asm
 	nasm -f bin -o $@ $<

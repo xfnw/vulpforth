@@ -52,15 +52,17 @@ section .data
 %include "vars.asm"
 
 section .text
-	global _start
 %ifdef ZIPAPP
+	global main
 	extern zipfd_init
 	extern zipfd_open
+%else
+	global _start
 %endif
 
 %include "words.asm"
 
-_start:
+main:
 %ifdef ZIPAPP
 	call zipfd_init
 	; linking a c object makes the bss section stop being
@@ -73,6 +75,8 @@ _start:
 	xor edx, edx
 	mov dl, 7	; PROT_READ|PROT_WRITE|PROT_EXEC
 	int 0x80
+%else
+_start:
 %endif
 	mov [stackstart], esp	; keep initial stack position
 restart	mov ebp, retstack+retsz	; initialize return stack

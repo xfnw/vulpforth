@@ -42,3 +42,21 @@ or the (much larger) linked debug binary with
 make vulpforth
 ```
 
+or the (comparatively gigantic due to needing c) zipapp
+debug binary with
+
+```sh
+git submodule update --init # if you have not already
+make vulpforth.zip
+```
+
+note that zip includes modification times. if you care about
+reproducible builds, run `files.zip` through something like
+[strip-nondeterminism]. there is also no release counterpart for the
+zipapp since the debug symbols are inconsequential compared to the
+size of statically including libc. however, if you wish to squeeze out
+a smaller binary, use musl libc and sstrip `vulpforthzip`. both of
+these should be done *before* `vulpforthzip` and `files.zip` get
+concatenated into `vulpforth.zip`
+
+[strip-nondeterminism]: https://salsa.debian.org/reproducible-builds/strip-nondeterminism

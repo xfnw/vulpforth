@@ -62,8 +62,8 @@ section .text
 
 %include "words.asm"
 
-main:
 %ifdef ZIPAPP
+main:
 	call zipfd_init
 	; linking a c object makes the bss section stop being
 	; executable, set it executable ourself with mprotect

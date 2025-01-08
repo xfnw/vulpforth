@@ -18,11 +18,11 @@ extern void zipfd_init(void) {
 	}
 }
 
-/* flags get ignored, it is only there to keep the same
- * signature as the non-zip open forth word */
 extern int zipfd_open(int len, char *name, int flags) {
 	name[len] = '\0';
 
+	if (flags != 0)
+		return -13; /* EACCES */
 	if (zip_entry_open(z, name) != 0)
 		return -1;
 

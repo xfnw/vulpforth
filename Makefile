@@ -18,6 +18,10 @@ vulpforthzip: vulpforthzip.o zipfd.o zip/src/zip.o
 vulpforthzip.o: vulpforth.asm elf.asm words.asm vars.asm
 	nasm -f elf -F dwarf -g -dZIPAPP -o $@ $<
 
+zipfd.o: zip/src/zip.h
+
+zip/src/zip.o: zip/src/zip.h zip/src/miniz.h
+
 %.o: %.c
 	${CC} -m32 -c ${CFLAGS} -o $@ $<
 

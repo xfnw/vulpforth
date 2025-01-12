@@ -48,6 +48,9 @@ DEFWORD %1, %str(%1), %2, %3
 %ifidn __OUTPUT_FORMAT__, elf
 section .data
 %endif
+%ifdef ZIPAPP
+initfn	db 'init.vf', 0
+%endif
 
 %include "vars.asm"
 
@@ -79,6 +82,15 @@ main:
 _start:
 %endif
 	mov [stackstart], esp	; keep initial stack position
+%ifdef ZIPAPP
+	mov ebp, retstack+retsz	; initialize return stack
+	cld			; set direction to forwards
+	call enter
+	dd lit, initfn
+	dd lit, 7
+	dd loadfrom
+	dd init
+%endif
 restart	mov ebp, retstack+retsz	; initialize return stack
 	mov [wordfd], dword 0	; read words from stdin
 	cld			; set direction to forwards

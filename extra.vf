@@ -1,23 +1,19 @@
-: compile lit [ ' lit , ] , ' , ; immediate
-: compile@ compile lit@ , ' , ; immediate
-: compile! compile lit! , ' , ; immediate
-
 : if ( -- a ) \ turns into ( b -- )
-	compile gotz , compile@ here 0 , ; immediate
+	lit gotz , lit@ here 0 , ; immediate
 : !if ( -- a ) \ turns into ( b -- )
-	compile gonz , compile@ here 0 , ; immediate
+	lit gonz , lit@ here 0 , ; immediate
 : else ( a -- a )
-	compile goto , compile@ here 0 ,
+	lit goto , lit@ here 0 ,
 	dup 4+ rot ! ; immediate
 : then ( a -- )
-	compile@ here swap ! ; immediate
+	lit@ here swap ! ; immediate
 
 : begin ( -- a )
-	compile@ here ; immediate
+	lit@ here ; immediate
 : while ( a -- ) \ turns into ( b -- )
-	compile gonz , , ; immediate
+	lit gonz , , ; immediate
 : until ( a -- ) \ turns into ( b -- )
-	compile gotz , , ; immediate
+	lit gotz , , ; immediate
 
 : [then] ( -- ) ;
 : [if] ( b -- )
@@ -26,5 +22,5 @@
 	str= until then ;
 
 : sigcatch ( -- )
-	0 compile abort 11 48 syscall
-	compile abort 2 48 syscall drop ;
+	0 lit abort 11 48 syscall
+	lit abort 2 48 syscall drop ;

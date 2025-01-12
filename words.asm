@@ -82,8 +82,8 @@ DEFWORD over, 0b000, rot2
 DEFWORD dover, '2over', 0b000, over
 	pop eax
 	pop ecx
-	push eax
 	push ecx
+	push eax
 	push ebx
 	xchg ebx, ecx
 	NEXT

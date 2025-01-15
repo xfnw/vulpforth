@@ -24,3 +24,12 @@
 : sigcatch ( -- )
 	0 lit abort 11 48 syscall
 	lit abort 2 48 syscall drop ;
+
+create pipebuf 128 alloc
+: pipe ( i o -- )
+	begin 128 2over lit pipebuf swap 3 syscall
+	dup 0 > !if 2drop drop exit then
+	over lit pipebuf swap 4 syscall
+	0 > while 2drop ;
+: cat ( -- )
+	0 word open dup 1 pipe close ;

@@ -5,7 +5,7 @@
 ;      db    dd
 ; 
 ; flags:
-; immediate nointerpret TBD namelen*5
+; immediate nointerpret namelen*6
 ;
 ; registers:
 ; eax - overwritable
@@ -21,7 +21,7 @@
 
 %macro DEFWORD 4
 	db %2			; name
-	db %3<<5|%strlen(%2)	; flags & length
+	db %3<<6|%strlen(%2)	; flags & length
 	dd %4			; previous word
 %1:
 %endmacro

@@ -1,36 +1,36 @@
-DEFWORD enter, 0b010, latest
+DEFWORD enter, 0b01, latest
 	PUSHRET esi	; save previous word in return stack
 	pop esi		; grab new word pointer from call
 	NEXT
 
-DEFWORD exit, 0b000, enter
+DEFWORD exit, 0b00, enter
 	POPRET esi	; switch to words at top of return stack
 	NEXT
 
-DEFWORD lit, 0b010, exit
+DEFWORD lit, 0b01, exit
 	push ebx	; make room in working stack
 	lodsd		; grab next colon-word token
 	xchg ebx, eax	; put it on the stack
 	NEXT
 
-DEFWORD litat, 'lit@', 0b010, lit
+DEFWORD litat, 'lit@', 0b01, lit
 	push ebx
 	lodsd
 	mov ebx, [eax]	; same thing but dereferenced
 	NEXT
 
-DEFWORD litput, 'lit!', 0b010, litat
+DEFWORD litput, 'lit!', 0b01, litat
 	lodsd
 	mov [eax], ebx
 	pop ebx
 	NEXT
 
-DEFWORD goto, 0b010, litput
+DEFWORD goto, 0b01, litput
 	lodsd		; grab next colon-word token
 	xchg esi, eax	; jump to it
 	NEXT
 
-DEFWORD gotz, 0b010, goto
+DEFWORD gotz, 0b01, goto
 	cmp ebx, 0	; check if top of stack is 0
 	pop ebx		; consume it
 	lodsd		; grab next colon-word token
@@ -38,7 +38,7 @@ DEFWORD gotz, 0b010, goto
 	xchg esi, eax	; jump to it
 notgon	NEXT
 
-DEFWORD gonz, 0b010, gotz
+DEFWORD gonz, 0b01, gotz
 	cmp ebx, 0	; check if top of stack is 0
 	pop ebx		; consume it
 	lodsd		; grab next colon-word token
@@ -47,13 +47,13 @@ DEFWORD gonz, 0b010, gotz
 yesgon	NEXT
 
 ; ( a -- )
-DEFWORD jump, 0b000, gonz
+DEFWORD jump, 0b00, gonz
 	xchg eax, ebx
 	pop ebx
 	jmp eax
 
 ; ( a b c -- b c a )
-DEFWORD rot, 0b000, jump
+DEFWORD rot, 0b00, jump
 	pop eax
 	pop edx
 	push eax
@@ -62,7 +62,7 @@ DEFWORD rot, 0b000, jump
 	NEXT
 
 ; ( a b c -- c a b )
-DEFWORD rot2, 'rot>', 0b000, rot
+DEFWORD rot2, 'rot>', 0b00, rot
 	pop eax
 	pop edx
 	push ebx
@@ -71,7 +71,7 @@ DEFWORD rot2, 'rot>', 0b000, rot
 	NEXT
 
 ; ( a b -- a b a )
-DEFWORD over, 0b000, rot2
+DEFWORD over, 0b00, rot2
 	pop eax
 	push eax
 	push ebx
@@ -79,7 +79,7 @@ DEFWORD over, 0b000, rot2
 	NEXT
 
 ; ( a b c -- a b c a )
-DEFWORD dover, '2over', 0b000, over
+DEFWORD dover, '2over', 0b00, over
 	pop eax
 	pop ecx
 	push ecx
@@ -89,42 +89,42 @@ DEFWORD dover, '2over', 0b000, over
 	NEXT
 
 ; ( a -- )
-DEFWORD drop, 0b000, dover
+DEFWORD drop, 0b00, dover
 	pop ebx
 	NEXT
 
 ; ( a a -- )
-DEFWORD ddrop, '2drop', 0b000, drop
+DEFWORD ddrop, '2drop', 0b00, drop
 	pop ebx
 	pop ebx
 	NEXT
 
 ; ( a b -- b )
-DEFWORD nip, 0b000, ddrop
+DEFWORD nip, 0b00, ddrop
 	pop eax
 	NEXT
 
 ; ( a b -- b a b )
-DEFWORD tuck, 0b000, nip
+DEFWORD tuck, 0b00, nip
 	pop eax
 	push ebx
 	push eax
 	NEXT
 
 ; ( a -- a a )
-DEFWORD dup, 0b000, tuck
+DEFWORD dup, 0b00, tuck
 	push ebx
 	NEXT
 
 ; ( a -- a a? )
-DEFWORD cdup, '?dup', 0b000, dup
+DEFWORD cdup, '?dup', 0b00, dup
 	cmp ebx, 0
 	jz nodup
 	push ebx
 nodup	NEXT
 
 ; ( a b -- a b a b )
-DEFWORD ddup, '2dup', 0b000, cdup
+DEFWORD ddup, '2dup', 0b00, cdup
 	pop eax
 	push eax	; pop+push is smaller than a mov
 	push ebx
@@ -132,14 +132,14 @@ DEFWORD ddup, '2dup', 0b000, cdup
 	NEXT
 
 ; ( a b -- b a )
-DEFWORD swap, 0b000, ddup
+DEFWORD swap, 0b00, ddup
 	pop eax
 	xchg ebx, eax
 	push eax
 	NEXT
 
 ; ( a b c d -- c d a b )
-DEFWORD dswap, '2swap', 0b000, swap
+DEFWORD dswap, '2swap', 0b00, swap
 	pop eax
 	pop ecx
 	pop edx
@@ -150,14 +150,14 @@ DEFWORD dswap, '2swap', 0b000, swap
 	NEXT
 
 ; ( a -- stack[a] )
-DEFWORD nth, 0b000, dswap
+DEFWORD nth, 0b00, dswap
 	mov ebx, [esp+ebx*4]
 	NEXT
 
 ; ( arg3 arg2 arg1 num -- res )
 ; note that the 4 stack items will still be consumed even
 ; if the syscall takes less than 3 args.
-DEFWORD syscall, 0b000, nth
+DEFWORD syscall, 0b00, nth
 	xchg eax, ebx	; get syscall number from top of stack
 	pop ebx		; syscall args
 	pop ecx
@@ -167,7 +167,7 @@ DEFWORD syscall, 0b000, nth
 	NEXT
 
 ; ( arg6 arg5 arg4 arg3 arg2 arg1 num -- res )
-DEFWORD syscall6, 0b000, syscall
+DEFWORD syscall6, 0b00, syscall
 	xchg eax, ebx	; get syscall number from top of stack
 	pop ebx		; syscall args
 	pop ecx
@@ -183,89 +183,89 @@ DEFWORD syscall6, 0b000, syscall
 	NEXT
 
 ; ( a b -- a<<b )
-DEFWORD lshift, 0b000, syscall6
+DEFWORD lshift, 0b00, syscall6
 	pop ecx
 	xchg ebx, ecx
 	shl ebx, cl
 	NEXT
 
 ; ( a b -- a>>b )
-DEFWORD rshift, 0b000, lshift
+DEFWORD rshift, 0b00, lshift
 	pop ecx
 	xchg ebx, ecx
 	shr ebx, cl
 	NEXT
 
 ; ( a b -- a&b )
-DEFWORD band, 'and', 0b000, rshift
+DEFWORD band, 'and', 0b00, rshift
 	pop eax
 	and ebx, eax
 	NEXT
 
 ; ( a b -- a|b )
-DEFWORD bor, 'or', 0b000, band
+DEFWORD bor, 'or', 0b00, band
 	pop eax
 	or ebx, eax
 	NEXT
 
 ; ( a b -- a^b )
-DEFWORD bxor, 'xor', 0b000, bor
+DEFWORD bxor, 'xor', 0b00, bor
 	pop eax
 	xor ebx, eax
 	NEXT
 
 ; ( a -- !a )
-DEFWORD bnot, 'not', 0b000, bxor
+DEFWORD bnot, 'not', 0b00, bxor
 	not ebx
 	NEXT
 
 ; ( a b -- a+b )
-DEFWORD plus, '+', 0b000, bnot
+DEFWORD plus, '+', 0b00, bnot
 	pop eax
 	add ebx, eax
 	NEXT
 
 ; ( a b -- b-a )
-DEFWORD minusinv, '-^', 0b000, plus
+DEFWORD minusinv, '-^', 0b00, plus
 	pop eax
 	sub ebx, eax
 	NEXT
 
 ; ( a -- a+1 )
-DEFWORD increment, '1+', 0b000, minusinv
+DEFWORD increment, '1+', 0b00, minusinv
 	add ebx, 1
 	NEXT
 
 ; ( a -- a-1 )
-DEFWORD decrement, '1-', 0b000, increment
+DEFWORD decrement, '1-', 0b00, increment
 	sub ebx, 1
 	NEXT
 
 ; ( a -- a+4 )
-DEFWORD increment4, '4+', 0b000, decrement
+DEFWORD increment4, '4+', 0b00, decrement
 	add ebx, 4
 	NEXT
 
 ; ( a -- a-4 )
-DEFWORD decrement4, '4-', 0b000, increment4
+DEFWORD decrement4, '4-', 0b00, increment4
 	sub ebx, 4
 	NEXT
 
 ; ( a b -- a-b )
-DEFWORD minus, '-', 0b000, decrement4
+DEFWORD minus, '-', 0b00, decrement4
 	pop eax
 	xchg ebx, eax
 	sub ebx, eax
 	NEXT
 
 ; ( a b -- a*b )
-DEFWORD mulsigned, '*', 0b000, minus
+DEFWORD mulsigned, '*', 0b00, minus
 	pop eax
 	imul ebx, eax
 	NEXT
 
 ; ( a b -- a/b a%b )
-DEFWORD divmodsigned, '/mod', 0b000, mulsigned
+DEFWORD divmodsigned, '/mod', 0b00, mulsigned
 	pop eax
 	cdq
 	idiv ebx
@@ -274,24 +274,24 @@ DEFWORD divmodsigned, '/mod', 0b000, mulsigned
 	NEXT
 
 ; ( a -- -a )
-DEFWORD negate, '~', 0b000, divmodsigned
+DEFWORD negate, '~', 0b00, divmodsigned
 	neg ebx
 	NEXT
 
 ; ( a -- a>>31 )
-DEFWORD isneg, '?neg', 0b000, negate
+DEFWORD isneg, '?neg', 0b00, negate
 	shr ebx, 31
 	NEXT
 
 ; ( a -- |a| )
-DEFWORD absv, 'abs', 0b000, isneg
+DEFWORD absv, 'abs', 0b00, isneg
 	test ebx, 1<<31
 	jz alrpos
 	neg ebx
 alrpos	NEXT
 
 ; ( -- waddr wsize )
-DEFWORD getword, 'word', 0b000, absv
+DEFWORD getword, 'word', 0b00, absv
 	push ebx
 regetw	mov ebx, [wordfd]
 	mov ecx, wordbuf-1
@@ -324,7 +324,7 @@ badrd	xor ebx, ebx
 ; adds a lil null termination, as a treat (not included in length)
 ; so that its convenient to use with syscalls that take paths etc
 ; decrement here after using if you dont want this
-DEFWORD string, '"', 0b000, getword
+DEFWORD string, '"', 0b00, getword
 	push ebx
 	mov edi, [here]
 	push edi
@@ -348,7 +348,7 @@ strbye	mov ebx, ecx
 	NEXT
 
 ; ( c -- )
-DEFWORD emit, 0b000, string
+DEFWORD emit, 0b00, string
 	push ebx
 	xor eax, eax
 	mov al, 4
@@ -361,20 +361,20 @@ DEFWORD emit, 0b000, string
 	pop ebx
 	NEXT
 
-DEFWORD spc, 0b000, emit
+DEFWORD spc, 0b00, emit
 	call enter
 	dd lit, ' '
 	dd emit
 	dd exit
 
-DEFWORD nl, 0b000, spc
+DEFWORD nl, 0b00, spc
 	call enter
 	dd lit, `\n`
 	dd emit
 	dd exit
 
 ; ( str len -- )
-DEFWORD emits, 0b000, nl
+DEFWORD emits, 0b00, nl
 	call enter
 	dd swap
 	dd lit, 1
@@ -383,29 +383,29 @@ DEFWORD emits, 0b000, nl
 	dd drop
 	dd exit
 
-DEFWORD cat, 'c@', 0b000, emits
+DEFWORD cat, 'c@', 0b00, emits
 	mov bl, [ebx]
 	and ebx, 0xff
 	NEXT
 
-DEFWORD cput, 'c!', 0b000, cat
+DEFWORD cput, 'c!', 0b00, cat
 	pop eax
 	mov [ebx], al
 	pop ebx
 	NEXT
 
-DEFWORD dat, '@', 0b000, cput
+DEFWORD dat, '@', 0b00, cput
 	mov ebx, [ebx]
 	NEXT
 
-DEFWORD dput, '!', 0b000, dat
+DEFWORD dput, '!', 0b00, dat
 	pop eax
 	mov [ebx], eax
 	pop ebx
 	NEXT
 
 ; ( c -- )
-DEFWORD printhexc, '.xc', 0b000, dput
+DEFWORD printhexc, '.xc', 0b00, dput
 	call enter
 	dd lit, 0xf
 	dd band
@@ -416,7 +416,7 @@ DEFWORD printhexc, '.xc', 0b000, dput
 	dd exit
 	
 ; ( c -- )
-DEFWORD printhex1, '.x1', 0b000, printhexc
+DEFWORD printhex1, '.x1', 0b00, printhexc
 	call enter
 	dd dup
 	dd lit, 4
@@ -426,7 +426,7 @@ DEFWORD printhex1, '.x1', 0b000, printhexc
 	dd exit
 
 ; ( c -- )
-DEFWORD printhex2, '.x2', 0b000, printhex1
+DEFWORD printhex2, '.x2', 0b00, printhex1
 	call enter
 	dd dup
 	dd lit, 8
@@ -436,7 +436,7 @@ DEFWORD printhex2, '.x2', 0b000, printhex1
 	dd exit
 
 ; ( c -- )
-DEFWORD printhex, '.x', 0b000, printhex2
+DEFWORD printhex, '.x', 0b00, printhex2
 	call enter
 	dd dup
 	dd lit, 16
@@ -446,7 +446,7 @@ DEFWORD printhex, '.x', 0b000, printhex2
 	dd exit
 
 ; ( c -- )
-DEFWORD print, '.', 0b000, printhex
+DEFWORD print, '.', 0b00, printhex
 	call enter
 	dd lit, -1
 	dd swap
@@ -472,7 +472,7 @@ pprint	dd emit
 	dd exit
 
 ; ( a b -- a==b )
-DEFWORD eq, '=', 0b000, print
+DEFWORD eq, '=', 0b00, print
 	pop eax
 	xchg edx, ebx
 	xor ebx, ebx
@@ -482,7 +482,7 @@ eqieq	inc ebx
 eqneq	NEXT
 
 ; ( a b -- a>b )
-DEFWORD gt, '>', 0b000, eq
+DEFWORD gt, '>', 0b00, eq
 	pop eax
 	xchg edx, ebx
 	xor ebx, ebx
@@ -491,7 +491,7 @@ DEFWORD gt, '>', 0b000, eq
 	NEXT
 
 ; ( m1 m2 len -- m1==m2 )
-DEFWORD memeq, 'mem=', 0b000, gt
+DEFWORD memeq, 'mem=', 0b00, gt
 	xchg ecx, ebx
 	xor ebx, ebx
 	pop eax
@@ -504,7 +504,7 @@ lmemeq	mov dl, [eax+ecx-1]
 nmemeq	NEXT
 
 ; ( m1 len m2 -- )
-DEFWORD memcpy, 0b000, memeq
+DEFWORD memcpy, 0b00, memeq
 	pop ecx
 	pop eax
 memcl	mov dl, [eax+ecx-1]
@@ -514,7 +514,7 @@ memcl	mov dl, [eax+ecx-1]
 	NEXT
 
 ; ( str len -- )
-DEFWORD strcom, 'str,', 0b000, memcpy
+DEFWORD strcom, 'str,', 0b00, memcpy
 	call enter
 	dd dup
 	dd rot2
@@ -524,7 +524,7 @@ DEFWORD strcom, 'str,', 0b000, memcpy
 	dd exit
 
 ; ( str1 len1 str2 len2 -- str1==str2 )
-DEFWORD streq, 'str=', 0b000, strcom
+DEFWORD streq, 'str=', 0b00, strcom
 	call enter
 	dd rot
 	dd over
@@ -538,13 +538,13 @@ nstreq	dd ddrop
 	dd exit
 
 ; ( addr -- str len )
-DEFWORD dictname, 0b000, streq
+DEFWORD dictname, 0b00, streq
 	call enter
 	dd lit, 5
 	dd minus
 	dd dup
 	dd cat
-	dd lit, 0b00011111
+	dd lit, 0b00111111
 	dd band
 	dd tuck
 	dd minus
@@ -552,24 +552,24 @@ DEFWORD dictname, 0b000, streq
 	dd exit
 
 ; ( addr -- addr )
-DEFWORD dictprev, 0b000, dictname
+DEFWORD dictprev, 0b00, dictname
 	call enter
 	dd decrement4
 	dd dat
 	dd exit
 
 ; ( addr -- flags )
-DEFWORD dictflags, 0b000, dictprev
+DEFWORD dictflags, 0b00, dictprev
 	call enter
 	dd lit, 5
 	dd minus
 	dd cat
-	dd lit, 5
+	dd lit, 6
 	dd rshift
 	dd exit
 
 ; ( -- )
-DEFWORD dictcom, 'dict,', 0b000, dictflags
+DEFWORD dictcom, 'dict,', 0b00, dictflags
 	call enter
 	dd getword
 	dd cdup
@@ -577,7 +577,7 @@ DEFWORD dictcom, 'dict,', 0b000, dictflags
 	dd dup
 	dd rot2
 	dd strcom
-	dd lit, 0b00011111
+	dd lit, 0b00111111
 	dd band
 	dd ccom
 	dd litat, latest
@@ -587,7 +587,7 @@ DEFWORD dictcom, 'dict,', 0b000, dictflags
 	dd exit
 
 ; ( flags -- )
-DEFWORD dictor, 0b000, dictcom
+DEFWORD dictor, 0b00, dictcom
 	mov eax, [latest]
 	shl ebx, 5
 	or [eax-5], bl
@@ -595,7 +595,7 @@ DEFWORD dictor, 0b000, dictcom
 	NEXT
 
 ; ( -- )
-DEFWORD words, 0b000, dictor
+DEFWORD words, 0b00, dictor
 	call enter
 	dd litat, latest
 wdsloop	dd dup
@@ -609,7 +609,7 @@ wdsloop	dd dup
 	dd exit
 
 ; ( str len -- addr )
-DEFWORD find, 0b000, words
+DEFWORD find, 0b00, words
 	call enter
 	dd litat, latest
 findrep	dd rot2
@@ -628,7 +628,7 @@ findbye	dd ddrop
 	dd exit
 
 ; ( -- addr )
-DEFWORD wordaddr, `'`, 0b000, find
+DEFWORD wordaddr, `'`, 0b00, find
 	call enter
 	dd getword
 	dd ddup
@@ -640,7 +640,7 @@ DEFWORD wordaddr, `'`, 0b000, find
 	dd exit
 
 ; ( -- b )
-DEFWORD wordchar, `''`, 0b000, wordaddr
+DEFWORD wordchar, `''`, 0b00, wordaddr
 	call enter
 	dd getword
 	dd gotz, wnowc
@@ -648,7 +648,7 @@ DEFWORD wordchar, `''`, 0b000, wordaddr
 wnowc	dd exit
 
 ; ( addr len -- )
-DEFWORD dump, 0b000, wordchar
+DEFWORD dump, 0b00, wordchar
 	call enter
 dumploo	dd cdup
 	dd gotz, dbye
@@ -665,7 +665,7 @@ dbye	dd drop
 	dd exit
 
 ; ( -- h )
-DEFWORD stackheight, 0b000, dump
+DEFWORD stackheight, 0b00, dump
 	mov eax, esp
 	push ebx
 	mov ebx, [stackstart]
@@ -674,13 +674,13 @@ DEFWORD stackheight, 0b000, dump
 	NEXT
 
 ; ( -- p )
-DEFWORD stackpos, 0b000, stackheight
+DEFWORD stackpos, 0b00, stackheight
 	mov eax, esp
 	push ebx
 	xchg ebx, eax
 	NEXT
 
-DEFWORD printstack, '.S', 0b000, stackpos
+DEFWORD printstack, '.S', 0b00, stackpos
 	call enter
 	dd stackheight
 	dd stackpos
@@ -689,14 +689,14 @@ DEFWORD printstack, '.S', 0b000, stackpos
 	dd nl
 	dd exit
 
-DEFWORD bye, 0b000, printstack
+DEFWORD bye, 0b00, printstack
 	call enter
 	dd lit, 0 ; success
 	dd lit, 1 ; nr_exit
 	dd syscall
 
 abrtstr	db ' '
-DEFWORD abort, 0b000, bye
+DEFWORD abort, 0b00, bye
 	call enter
 	dd lit, abrtstr
 	dd lit, 6
@@ -704,13 +704,13 @@ DEFWORD abort, 0b000, bye
 	dd restart
 
 ; ( a -- a )
-DEFWORD cabort, '?abort', 0b000, abort
+DEFWORD cabort, '?abort', 0b00, abort
 	cmp ebx, 0
 	jz abort
 	NEXT
 
 ; ( str len -- str len b )
-DEFWORD startsnum, '?num', 0b000, cabort
+DEFWORD startsnum, '?num', 0b00, cabort
 	pop edx
 	push edx
 	push ebx
@@ -725,7 +725,7 @@ DEFWORD startsnum, '?num', 0b000, cabort
 notanum	NEXT
 
 ; ( str len -- num )
-DEFWORD parsenum, 0b000, startsnum
+DEFWORD parsenum, 0b00, startsnum
 	pop edx		; str ptr
 	xchg ecx, ebx	; length
 	xor ebx, ebx	; result
@@ -750,7 +750,7 @@ numnob	and eax, 15
 	NEXT
 
 stunstr	db ' stack underflow'
-DEFWORD chkstack, 0b000, parsenum
+DEFWORD chkstack, 0b00, parsenum
 	cmp esp, [stackstart]
 	jle cstkok
 	mov esp, [stackstart]
@@ -767,7 +767,7 @@ cstkok	NEXT
 
 wnfstr	db ' word not found'
 intstr	db ' nointerpret'
-DEFWORD repl, 0b000, chkstack
+DEFWORD repl, 0b00, chkstack
 	call enter
 inmore	dd chkstack
 	dd getword
@@ -791,7 +791,7 @@ innonn	dd emits
 	dd abort
 incii	dd dup
 	dd dictflags
-	dd lit, 0b010
+	dd lit, 0b01
 	dd band
 	dd gonz, innoin
 	dd rot2
@@ -807,7 +807,7 @@ innoin	dd drop
 
 ; ( flags str len -- fd )
 ; flags: 0 is read-only, 1 is write-only, 2 is read+write
-DEFWORD open, 0b000, repl
+DEFWORD open, 0b00, repl
 %ifdef ZIPAPP
 	push ebx
 	call zipfd_open
@@ -832,7 +832,7 @@ DEFWORD open, 0b000, repl
 
 ; ( fd -- )
 badfd	db 'bad fd'
-DEFWORD close, 0b000, open
+DEFWORD close, 0b00, open
 	call enter
 	dd lit, 6	; close
 	dd ddup		; fill extra stuff with nonsense
@@ -845,7 +845,7 @@ DEFWORD close, 0b000, open
 clexit	dd exit
 
 ; ( str len -- )
-DEFWORD loadfrom, 0b000, close
+DEFWORD loadfrom, 0b00, close
 	call enter
 	dd lit, 0	; read-only
 	dd rot2
@@ -859,14 +859,14 @@ DEFWORD loadfrom, 0b000, close
 	dd exit
 
 ; ( -- )
-DEFWORD load, 0b000, loadfrom
+DEFWORD load, 0b00, loadfrom
 	call enter
 	dd getword
 	dd loadfrom
 	dd exit
 
 ; ( n -- )
-DEFWORD newhere, 0b000, load
+DEFWORD newhere, 0b00, load
 	call enter
 	dd lit, 0	; no offset
 	dd lit, -1	; anonymous fd
@@ -881,13 +881,13 @@ DEFWORD newhere, 0b000, load
 	dd exit
 
 ; ( n -- )
-DEFWORD alloc, 0b000, newhere
+DEFWORD alloc, 0b00, newhere
 	add [here], ebx
 	pop ebx
 	NEXT
 
 ; ( n -- )
-DEFWORD dcom, ',', 0b000, alloc
+DEFWORD dcom, ',', 0b00, alloc
 	mov ecx, [here]
 	mov [ecx], ebx
 	add [here], dword 4
@@ -895,7 +895,7 @@ DEFWORD dcom, ',', 0b000, alloc
 	NEXT
 
 ; ( n -- )
-DEFWORD ccom, 'c,', 0b000, dcom
+DEFWORD ccom, 'c,', 0b00, dcom
 	mov ecx, [here]
 	mov [ecx], bl
 	inc dword [here]
@@ -903,7 +903,7 @@ DEFWORD ccom, 'c,', 0b000, dcom
 	NEXT
 
 ; ( -- )
-DEFWORD entercom, 'enter,', 0b000, ccom
+DEFWORD entercom, 'enter,', 0b00, ccom
 	call enter
 	dd lit, enter
 	dd litat, here
@@ -914,7 +914,7 @@ DEFWORD entercom, 'enter,', 0b000, ccom
 
 ; ( -- )
 semicol	db ';'
-DEFWORD colres, ':rs', 0b000, entercom
+DEFWORD colres, ':rs', 0b00, entercom
 	call enter
 colmode	dd getword
 	dd cdup
@@ -945,14 +945,14 @@ colgtw	dd rot2
 	dd ddrop
 	dd dup
 	dd dictflags
-	dd lit, 0b100
+	dd lit, 0b10
 	dd band
 	dd gotz, colwrd
 	dd jump
 	dd goto, colmode
 
 ; ( -- )
-DEFWORD colon, ':', 0b000, colres
+DEFWORD colon, ':', 0b00, colres
 	call enter
 	dd dictcom
 	dd lit, 0xe8
@@ -962,7 +962,7 @@ DEFWORD colon, ':', 0b000, colres
 	dd exit
 
 ; ( -- )
-DEFWORD create, 0b000, colon
+DEFWORD create, 0b00, colon
 	call enter
 	dd dictcom
 	dd lit, 2
@@ -970,7 +970,7 @@ DEFWORD create, 0b000, colon
 	dd exit
 
 ; ( -- )
-DEFWORD immediate, 0b000, create
+DEFWORD immediate, 0b00, create
 	push ebx
 	xor ebx, ebx
 	mov bl, 4
@@ -978,7 +978,7 @@ DEFWORD immediate, 0b000, create
 
 ; ( -- )
 rbrack	db ']'
-DEFWORD bracket, '[', 0b100, immediate
+DEFWORD bracket, '[', 0b10, immediate
 	call enter
 braloop	dd getword
 	dd cdup
@@ -1000,7 +1000,7 @@ bracpw	dd ddup
 	dd goto, braloop
 bragtw	dd dup
 	dd dictflags
-	dd lit, 0b010
+	dd lit, 0b01
 	dd band
 	dd gonz, innoin
 	dd rot2
@@ -1010,7 +1010,7 @@ bragtw	dd dup
 
 ; ( -- )
 parenc	db ')'
-DEFWORD paren, '(', 0b100, bracket
+DEFWORD paren, '(', 0b10, bracket
 	call enter
 parenl	dd getword
 	dd cdup
@@ -1021,7 +1021,7 @@ parenl	dd getword
 	dd gotz, parenl
 	dd exit
 
-DEFWORD backslash, '\', 0b100, paren
+DEFWORD backslash, '\', 0b10, paren
 	push ebx
 	xor eax, eax
 	mov ebx, [wordfd]
@@ -1039,7 +1039,7 @@ bsend	pop ebx
 
 vstr	db ':3'
 okstr	db ` ok\n`
-DEFWORD init, 0b000, backslash
+DEFWORD init, 0b00, backslash
 	call enter
 	dd lit, okstr
 	dd lit, 4

@@ -57,6 +57,7 @@ zipapp since the debug symbols are inconsequential compared to the
 size of statically including libc. however, if you wish to squeeze out
 a smaller binary, use musl libc and sstrip `vulpforthzip`. both of
 these should be done *before* `vulpforthzip` and `files.zip` get
-concatenated into `vulpforth.zip`
+concatenated into `vulpforth.zip`. these steps are automatically done
+by the included flake.
 
 [strip-nondeterminism]: https://salsa.debian.org/reproducible-builds/strip-nondeterminism

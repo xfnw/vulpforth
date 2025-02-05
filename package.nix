@@ -1,6 +1,7 @@
 { lib
 , stdenv_32bit
 , pkgsi686Linux
+, perlPackages
 , elfkickers
 , nasm
 , upx
@@ -20,8 +21,9 @@ stdenv_32bit.mkDerivation {
   buildInputs = with pkgsi686Linux; [ musl ];
 
   buildPhase = ''
-    make ${if withTarget == "vulpforth.zip" then "vulpforthzip CFLAGS=-O1" else withTarget}
+    make ${if withTarget == "vulpforth.zip" then "vulpforthzip files.zip CFLAGS=-O1" else withTarget}
   '' + lib.optionalString (withTarget == "vulpforth.zip") ''
+    ${perlPackages.strip-nondeterminism}/bin/strip-nondeterminism files.zip
     ${lib.optionalString withSstrip "${elfkickers}/bin/sstrip -z vulpforthzip"}
     ${lib.optionalString withUpx "${upx}/bin/upx --best vulpforthzip"}
     make vulpforth.zip

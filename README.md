@@ -2,7 +2,6 @@
 
 a forth with some rather odd design decisions:
 
-- 3926 bytes (hehe funny number)
 - no hidden behavior
   - no special treatment of variables, requires manually retrieving
     values from memory, ie `' here @` instead of `here`

@@ -3,7 +3,7 @@
 a forth with some rather odd design decisions:
 
 - 3926 bytes (hehe funny number)
-- fully explicit
+- no hidden behavior
   - no special treatment of variables, requires manually retrieving
     values from memory, ie `' here @` instead of `here`
   - words that step on your toes (if/then/else, begin/until) are

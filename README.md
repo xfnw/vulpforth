@@ -9,8 +9,6 @@ a forth with some rather odd design decisions:
     kept out of the core words (those are in [extra.vf](./extra.vf))
   - no doer/does>
 - takes inspiration from:
-  - [breadbox's teensy elf files](https://www.muppetlabs.com/~breadbox/software/tiny/teensy.html)
-    (squishing the elf header together like that)
   - [miniforth](https://github.com/meithecatte/miniforth)
     (dtc using `lods`, dedicating a register to the value at the top
     of the working stack)
@@ -29,13 +27,7 @@ a forth with some rather odd design decisions:
 
 ## building
 
-after installing `nasm`, build the release binary with
-
-```sh
-make vulpforth.bin
-```
-
-or the (much larger) linked debug binary with
+after installing `nasm`, build with
 
 ```sh
 make vulpforth
@@ -51,12 +43,10 @@ make vulpforth.zip
 
 note that zip includes modification times. if you care about
 reproducible builds, run `files.zip` through something like
-[strip-nondeterminism]. there is also no release counterpart for the
-zipapp since the debug symbols are inconsequential compared to the
-size of statically including libc. however, if you wish to squeeze out
-a smaller binary, use musl libc and sstrip `vulpforthzip`. both of
-these should be done *before* `vulpforthzip` and `files.zip` get
-concatenated into `vulpforth.zip`. these steps are automatically done
-by the included flake's `zip` output.
+[strip-nondeterminism]. if you wish to squeeze out a smaller binary,
+use musl libc and sstrip `vulpforthzip`. both of these should be done
+*before* `vulpforthzip` and `files.zip` get concatenated into
+`vulpforth.zip`. these steps are automatically done by the included
+flake's `zip` output.
 
 [strip-nondeterminism]: https://salsa.debian.org/reproducible-builds/strip-nondeterminism

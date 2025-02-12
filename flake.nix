@@ -9,11 +9,12 @@
       ] (system: p nixpkgs.legacyPackages.${system});
   in {
     packages = forAllSystems (pkgs: rec {
-      bin = pkgs.callPackage ./package.nix {
-        withTarget = "vulpforth.bin";
+      vulpforth = pkgs.callPackage ./package.nix {
+        withTarget = "vulpforth";
       };
       debug = pkgs.callPackage ./package.nix {
         withTarget = "vulpforth";
+        withSstrip = false;
       };
       zip = pkgs.callPackage ./package.nix {
         withTarget = "vulpforth.zip";
@@ -23,7 +24,7 @@
         withSstrip = false;
         withUpx = false;
       };
-      default = bin;
+      default = vulpforth;
     });
   };
 }

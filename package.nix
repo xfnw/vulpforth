@@ -6,7 +6,7 @@
 , nasm
 , upx
 , zip
-, withTarget ? "vulpforth.bin"
+, withTarget ? "vulpforth"
 , withSstrip ? true
 , withUpx ? true
 }:
@@ -22,9 +22,10 @@ stdenv_32bit.mkDerivation {
 
   buildPhase = ''
     make ${if withTarget == "vulpforth.zip" then "vulpforthzip files.zip CFLAGS=-O1" else withTarget}
+  '' + lib.optionalString withSstrip ''
+    ${elfkickers}/bin/sstrip -z ${if withTarget == "vulpforth.zip" then "vulpforthzip" else withTarget}
   '' + lib.optionalString (withTarget == "vulpforth.zip") ''
     ${perlPackages.strip-nondeterminism}/bin/strip-nondeterminism files.zip
-    ${lib.optionalString withSstrip "${elfkickers}/bin/sstrip -z vulpforthzip"}
     ${lib.optionalString withUpx "${upx}/bin/upx --best vulpforthzip"}
     make vulpforth.zip
   '';

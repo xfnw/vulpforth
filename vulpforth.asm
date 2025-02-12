@@ -17,8 +17,6 @@
 ; ecx - overwritable
 ; edx - overwritable
 
-%include "elf.asm"
-
 %macro DEFWORD 4
 	db %2			; name
 	db %3<<6|%strlen(%2)	; flags & length
@@ -45,9 +43,7 @@ DEFWORD %1, %str(%1), %2, %3
 	mov [ebp], %1	; take value from top of return stack
 %endmacro
 
-%ifidn __OUTPUT_FORMAT__, elf
 section .data
-%endif
 %ifdef ZIPAPP
 initfn	db 'init.vf', 0
 %endif

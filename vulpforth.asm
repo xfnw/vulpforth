@@ -100,6 +100,7 @@ wordlen resb 1		; length of last read word
 wordbuf resb 256	; last read word
 
 defhere alignb 4096
+resb 65536
 
 retstack resd 1024	; the return stack
 retsz equ $ - retstack

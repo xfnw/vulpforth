@@ -7,7 +7,10 @@ DEFWORD wordfd, 0b01, hexchr
 DEFWORD here, 0b01, wordfd
 	dd defhere	; address of next unused memory
 
-DEFWORD stackstart, 0b01, here
+DEFWORD hereend, 0b01, here
+	dd retstack	; address of end of here bounds
+
+DEFWORD stackstart, 0b01, hereend
 	dd 0	; address of start of working stack
 
 DEFWORD latest, 0b01, stackstart

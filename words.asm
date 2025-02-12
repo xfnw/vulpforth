@@ -865,9 +865,22 @@ DEFWORD load, 0b00, loadfrom
 	dd loadfrom
 	dd return
 
-; ( n -- )
-DEFWORD newhere, 0b00, load
+freestr	db ` bytes\n`
+DEFWORD free, 0b00, load
 	call enter
+	dd litat, hereend
+	dd litat, here
+	dd minus
+	dd print
+	dd lit, freestr
+	dd lit, 7
+	dd emits
+	dd return
+
+; ( n -- )
+DEFWORD newhere, 0b00, free
+	call enter
+	dd dup
 	dd lit, 0	; no offset
 	dd lit, -1	; anonymous fd
 	dd rot		; length
@@ -877,7 +890,10 @@ DEFWORD newhere, 0b00, load
 	dd lit, 0	; let kernel choose location
 	dd lit, 192	; mmap2 (AAAAAAAAAAAAAAAAAA)
 	dd syscall6
+	dd dup
 	dd litput, here
+	dd plus
+	dd litput, hereend
 	dd return
 
 ; ( n -- )

@@ -3,11 +3,11 @@ DEFWORD enter, 0b01, latest
 	pop esi		; grab new word pointer from call
 	NEXT
 
-DEFWORD exit, 0b00, enter
+DEFWORD return, 0b00, enter
 	POPRET esi	; switch to words at top of return stack
 	NEXT
 
-DEFWORD lit, 0b01, exit
+DEFWORD lit, 0b01, return
 	push ebx	; make room in working stack
 	lodsd		; grab next colon-word token
 	xchg ebx, eax	; put it on the stack
@@ -365,13 +365,13 @@ DEFWORD spc, 0b00, emit
 	call enter
 	dd lit, ' '
 	dd emit
-	dd exit
+	dd return
 
 DEFWORD nl, 0b00, spc
 	call enter
 	dd lit, `\n`
 	dd emit
-	dd exit
+	dd return
 
 ; ( str len -- )
 DEFWORD emits, 0b00, nl
@@ -381,7 +381,7 @@ DEFWORD emits, 0b00, nl
 	dd lit, 4
 	dd syscall
 	dd drop
-	dd exit
+	dd return
 
 DEFWORD cat, 'c@', 0b00, emits
 	mov bl, [ebx]
@@ -413,7 +413,7 @@ DEFWORD printhexc, '.xc', 0b00, dput
 	dd plus
 	dd cat
 	dd emit
-	dd exit
+	dd return
 	
 ; ( c -- )
 DEFWORD printhex1, '.x1', 0b00, printhexc
@@ -423,7 +423,7 @@ DEFWORD printhex1, '.x1', 0b00, printhexc
 	dd rshift
 	dd printhexc
 	dd printhexc
-	dd exit
+	dd return
 
 ; ( c -- )
 DEFWORD printhex2, '.x2', 0b00, printhex1
@@ -433,7 +433,7 @@ DEFWORD printhex2, '.x2', 0b00, printhex1
 	dd rshift
 	dd printhex1
 	dd printhex1
-	dd exit
+	dd return
 
 ; ( c -- )
 DEFWORD printhex, '.x', 0b00, printhex2
@@ -443,7 +443,7 @@ DEFWORD printhex, '.x', 0b00, printhex2
 	dd rshift
 	dd printhex2
 	dd printhex2
-	dd exit
+	dd return
 
 ; ( c -- )
 DEFWORD print, '.', 0b00, printhex
@@ -469,7 +469,7 @@ pprint	dd emit
 	dd eq
 	dd gotz, pprint
 	dd drop
-	dd exit
+	dd return
 
 ; ( a b -- a==b )
 DEFWORD eq, '=', 0b00, print
@@ -521,7 +521,7 @@ DEFWORD strcom, 'str,', 0b00, memcpy
 	dd litat, here
 	dd memcpy
 	dd alloc
-	dd exit
+	dd return
 
 ; ( str1 len1 str2 len2 -- str1==str2 )
 DEFWORD streq, 'str=', 0b00, strcom
@@ -531,11 +531,11 @@ DEFWORD streq, 'str=', 0b00, strcom
 	dd eq
 	dd gotz, nstreq
 	dd memeq
-	dd exit
+	dd return
 nstreq	dd ddrop
 	dd drop
 	dd lit, 0
-	dd exit
+	dd return
 
 ; ( addr -- str len )
 DEFWORD dictname, 0b00, streq
@@ -549,14 +549,14 @@ DEFWORD dictname, 0b00, streq
 	dd tuck
 	dd minus
 	dd swap
-	dd exit
+	dd return
 
 ; ( addr -- addr )
 DEFWORD dictprev, 0b00, dictname
 	call enter
 	dd decrement4
 	dd dat
-	dd exit
+	dd return
 
 ; ( addr -- flags )
 DEFWORD dictflags, 0b00, dictprev
@@ -566,7 +566,7 @@ DEFWORD dictflags, 0b00, dictprev
 	dd cat
 	dd lit, 6
 	dd rshift
-	dd exit
+	dd return
 
 ; ( -- )
 DEFWORD dictcom, 'dict,', 0b00, dictflags
@@ -584,7 +584,7 @@ DEFWORD dictcom, 'dict,', 0b00, dictflags
 	dd dcom
 	dd litat, here
 	dd litput, latest
-	dd exit
+	dd return
 
 ; ( flags -- )
 DEFWORD dictor, 0b00, dictcom
@@ -606,7 +606,7 @@ wdsloop	dd dup
 	dd cdup
 	dd gonz, wdsloop
 	dd nl
-	dd exit
+	dd return
 
 ; ( str len -- addr )
 DEFWORD find, 0b00, words
@@ -625,7 +625,7 @@ findrep	dd rot2
 	dd gonz, findrep
 	dd rot2
 findbye	dd ddrop
-	dd exit
+	dd return
 
 ; ( -- addr )
 DEFWORD wordaddr, `'`, 0b00, find
@@ -637,7 +637,7 @@ DEFWORD wordaddr, `'`, 0b00, find
 	dd gotz, innonn
 	dd rot2
 	dd ddrop
-	dd exit
+	dd return
 
 ; ( -- b )
 DEFWORD wordchar, `''`, 0b00, wordaddr
@@ -645,7 +645,7 @@ DEFWORD wordchar, `''`, 0b00, wordaddr
 	dd getword
 	dd gotz, wnowc
 	dd cat
-wnowc	dd exit
+wnowc	dd return
 
 ; ( addr len -- )
 DEFWORD dump, 0b00, wordchar
@@ -662,7 +662,7 @@ dumploo	dd cdup
 	dd decrement
 	dd goto, dumploo
 dbye	dd drop
-	dd exit
+	dd return
 
 ; ( -- h )
 DEFWORD stackheight, 0b00, dump
@@ -687,7 +687,7 @@ DEFWORD printstack, '.S', 0b00, stackpos
 	dd swap
 	dd dump
 	dd nl
-	dd exit
+	dd return
 
 DEFWORD bye, 0b00, printstack
 	call enter
@@ -776,7 +776,7 @@ inmore	dd chkstack
 	dd gonz, innote
 	dd ddrop
 	dd ddrop
-	dd exit
+	dd return
 innote	dd find
 	dd cdup
 	dd gonz, incii
@@ -827,7 +827,7 @@ DEFWORD open, 0b00, repl
 	dd rot2
 	dd lit, 5	; open
 	dd syscall
-	dd exit
+	dd return
 %endif
 
 ; ( fd -- )
@@ -842,7 +842,7 @@ DEFWORD close, 0b00, open
 	dd lit, 6
 	dd emits
 	dd abort
-clexit	dd exit
+clexit	dd return
 
 ; ( str len -- )
 DEFWORD loadfrom, 0b00, close
@@ -856,14 +856,14 @@ DEFWORD loadfrom, 0b00, close
 	dd close
 	dd lit, 0
 	dd litput, wordfd
-	dd exit
+	dd return
 
 ; ( -- )
 DEFWORD load, 0b00, loadfrom
 	call enter
 	dd getword
 	dd loadfrom
-	dd exit
+	dd return
 
 ; ( n -- )
 DEFWORD newhere, 0b00, load
@@ -878,7 +878,7 @@ DEFWORD newhere, 0b00, load
 	dd lit, 192	; mmap2 (AAAAAAAAAAAAAAAAAA)
 	dd syscall6
 	dd litput, here
-	dd exit
+	dd return
 
 ; ( n -- )
 DEFWORD alloc, 0b00, newhere
@@ -910,7 +910,7 @@ DEFWORD entercom, 'enter,', 0b00, ccom
 	dd increment4
 	dd minus
 	dd dcom
-	dd exit
+	dd return
 
 ; ( -- )
 semicol	db ';'
@@ -925,9 +925,9 @@ colmode	dd getword
 	dd streq
 	dd gotz, colpw
 	dd ddrop
-	dd lit, exit
+	dd lit, return
 	dd dcom
-	dd exit
+	dd return
 colpw	dd ddup
 	dd find
 	dd cdup
@@ -959,7 +959,7 @@ DEFWORD colon, ':', 0b00, colres
 	dd ccom
 	dd entercom
 	dd colres
-	dd exit
+	dd return
 
 ; ( -- )
 DEFWORD create, 0b00, colon
@@ -967,7 +967,7 @@ DEFWORD create, 0b00, colon
 	dd dictcom
 	dd lit, 2
 	dd dictor
-	dd exit
+	dd return
 
 ; ( -- )
 DEFWORD immediate, 0b00, create
@@ -989,7 +989,7 @@ braloop	dd getword
 	dd streq
 	dd gotz, bracpw
 	dd ddrop
-	dd exit
+	dd return
 bracpw	dd ddup
 	dd find
 	dd cdup
@@ -1019,7 +1019,7 @@ parenl	dd getword
 	dd lit, 1
 	dd streq
 	dd gotz, parenl
-	dd exit
+	dd return
 
 DEFWORD backslash, '\', 0b10, paren
 	push ebx

@@ -1,4 +1,4 @@
-DEFWORD enter, 0b01, latest
+DEFWORD enter, 0b01, loaded
 	PUSHRET esi	; save previous word in return stack
 	pop esi		; grab new word pointer from call
 	NEXT
@@ -1037,9 +1037,52 @@ bsloo	mov al, 3	; read
 bsend	pop ebx
 	NEXT
 
+DEFWORD require, 0b00, backslash
+	call enter
+	dd litat, loaded
+	dd getword
+	dd cabort
+reqlt	dd rot
+	dd cdup
+	dd gotz, reqgot
+	dd rot2
+	dd ddup
+	dd lit, 4
+	dd nth
+	dd dictname
+	dd streq
+	dd dswap
+	dd swap
+	dd dictprev
+	dd swap
+	dd dswap
+	dd gotz, reqlt
+	dd ddrop
+	dd drop
+	dd return
+reqgot	dd ddup
+	dd strcom
+	dd dup
+	dd ccom
+	dd litat, loaded
+	dd dcom
+	dd litat, here
+	dd litput, loaded
+	dd lit, 0
+	dd rot2
+	dd open
+	dd litat, wordfd
+	dd swap
+	dd dup
+	dd litput, wordfd
+	dd repl
+	dd close
+	dd litput, wordfd
+	dd return
+
 vstr	db ':3'
 okstr	db ` ok\n`
-DEFWORD init, 0b00, backslash
+DEFWORD init, 0b00, require
 	call enter
 	dd lit, okstr
 	dd lit, 4

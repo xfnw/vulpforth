@@ -12,3 +12,6 @@ DEFWORD stackstart, 0b01, here
 
 DEFWORD latest, 0b01, stackstart
 	dd init	; address of newest defined word
+
+DEFWORD loaded, 0b01, latest
+	dd 0	; address of newest required path

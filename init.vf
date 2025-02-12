@@ -1,10 +1,1 @@
-create loaded 0 ,
-: require lit@ loaded word ?abort [ ' here @ ]
-	rot ?dup gotz [ ' here @ swap 0 , ]
-	rot> 2dup 4 nth dictname str= 2swap swap dictprev swap 2swap
-	gotz [ , ] 2drop drop exit [ ' here @ swap ! ]
-	2dup str, dup c, lit@ loaded , lit@ here lit! loaded
-	0 rot> open lit@ wordfd swap dup lit! wordfd
-	repl close lit! wordfd ;
-
 require extra.vf

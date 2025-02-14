@@ -20,6 +20,9 @@ a forth with some rather odd design decisions:
 - not an operating system
   - i like being able to run other applications
   - targets x86 linux
+- no words for messing with the return stack
+  - it is more dangerous than useful in my opinion
+  - needlessly avoiding global variables is bad, actually
 - operates on words, not lines
   - no line length limit, but can cause weird behavior
   - mostly because it was simpler to implement, i might change my mind

@@ -20,6 +20,10 @@ a forth with some rather odd design decisions:
 - not an operating system
   - i like being able to run other applications
   - targets x86 linux
+- operates on words, not lines
+  - no line length limit, but can cause weird behavior
+  - mostly because it was simpler to implement, i might change my mind
+    about this one
 - being fast is not a goal
   - it *is* decently fast because modern computers are fast, but
     will choose the simple/small/slow way over a faster but more

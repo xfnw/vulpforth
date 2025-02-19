@@ -27,7 +27,7 @@
 	0 lit abort 11 48 syscall
 	lit abort 2 48 syscall drop ;
 
-create pipebuf 128 alloc
+create pipebuf 128 allot
 : pipe ( i o -- )
 	begin 128 2over lit pipebuf swap 3 syscall
 	dup 0 > !if 2drop drop return then

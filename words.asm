@@ -520,7 +520,7 @@ DEFWORD strcom, 'str,', 0b00, memcpy
 	dd rot2
 	dd litat, here
 	dd memcpy
-	dd alloc
+	dd allot
 	dd return
 
 ; ( str1 len1 str2 len2 -- str1==str2 )
@@ -897,13 +897,13 @@ DEFWORD newhere, 0b00, free
 	dd return
 
 ; ( n -- )
-DEFWORD alloc, 0b00, newhere
+DEFWORD allot, 0b00, newhere
 	add [here], ebx
 	pop ebx
 	NEXT
 
 ; ( n -- )
-DEFWORD dcom, ',', 0b00, alloc
+DEFWORD dcom, ',', 0b00, allot
 	mov ecx, [here]
 	mov [ecx], ebx
 	add [here], dword 4

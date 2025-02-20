@@ -1,0 +1,131 @@
+# core variables
+hexchr
+wordfd
+here
+hereend
+stackstart
+latest
+loaded
+
+# core words
+enter
+return		--
+lit		-> -- a
+lit@		-> -- *a
+lit!		-> a --
+goto		-> --
+gotz		-> b --
+gonz		-> b --
+jump		a --
+rot		a b c -- b c a
+rot>		a b c -- c a b
+over		a b -- a b a
+2over		a b c -- a b c a
+drop		a --
+2drop		a a --
+nip		a b -- b
+tuck		a b -- b a b
+dup		a -- a a
+?dup		a -- a a?
+2dup		a b -- a b a b
+swap		a b -- b a
+2swap		a b c d -- c d a b
+nth		a -- stack[a]
+syscall		arg3 arg2 arg1 num -- res
+syscall6	arg6 arg5 arg4 arg3 arg2 arg1 num -- res
+lshift		a b -- a<<b
+rshift		a b -- a>>b
+and		a b -- a&b
+or		a b -- a|b
+xor		a b -- a^b
+not		a -- !a
+~		a -- ~a
++		a b -- a+b
+-^		a b -- b-a
+1+		a -- a+1
+1-		a -- a-1
+4+		a -- a+4
+4-		a -- a-4
+-		a b -- a-b
+*		a b -- a*b
+/mod		a b -- a/b a%b
+neg		a -- -a
+?neg		a -- a>>31
+abs		a -- |a|
+word		-- waddr wsize
+"		-- str len
+emit		c --
+spc		--
+nl		--
+emits		str len --
+c@		addr -- c
+c!		c addr --
+@		addr -- a
+!		a addr --
+.xc		c --
+.x1		c --
+.x2		s --
+.x		a --
+.		a --
+=		a b -- a==b
+>		a b -- a>b
+mem=		m1 m2 len -- m1==m2
+memcpy		m1 len m2 --
+str,		str len --
+str=		str1 len1 str2 len2 -- str1==str2
+dictname	addr -- str len
+dictprev	addr -- addr
+dictflags	addr -- flags
+dictor		flags --
+:code		--
+;code		--
+words		--
+find		str len -- addr
+'		-- addr
+''		-- b
+wdump		addr len --
+stackheight	-- h
+stackpos	-- p
+.S		--
+bye		--
+abort		--
+?abort		a -- a
+?num		str len -- str len b
+parsenum	str len -- num
+chkstack	--
+repl		--
+open		flags str len -- fd
+close		fd --
+loadfrom	str len --
+load		--
+free		--
+newhere		n --
+allot		n --
+,		a --
+c,		c --
+enter,		--
+:rs		--
+:		--
+create		--
+immediate	--
+[		--
+(		--
+\		--
+require		--
+init		--
+
+# extra
+if		-- a -> b --
+!if		-- a -> b --
+else		a -- a -> --
+then		a -- -> --
+begin		-- a
+while		a -- -> b --
+until		a -- -> b --
+loop		a -- -> --
+[then]		--
+[if]		b --
+sigcatch	--
+pipebuf
+pipe		i o --
+cat		--

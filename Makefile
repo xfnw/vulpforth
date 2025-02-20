@@ -7,8 +7,8 @@ vulpforth.zip: vulpforthzip files.zip
 	zip -A $@
 	chmod +x $@
 
-files.zip: *.vf
-	zip $@ $^
+files.zip: doc *.vf
+	zip -r $@ $^
 
 vulpforthzip: vulpforthzip.o zipfd.o zip/src/zip.o
 	${CC} -m32 -static ${CFLAGS} -o $@ $^ ${LDFLAGS}

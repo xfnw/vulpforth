@@ -215,7 +215,16 @@ DEFWORD bxor, 'xor', 0b00, bor
 	NEXT
 
 ; ( a -- !a )
-DEFWORD bnot, 'not', 0b00, bxor
+DEFWORD lnot, 'not', 0b00, bxor
+	xchg eax, ebx
+	xor ebx, ebx
+	cmp eax, 0
+	jnz lnotz
+	inc ebx
+lnotz	NEXT
+
+; ( a -- ~a )
+DEFWORD bnot, '~', 0b00, lnot
 	not ebx
 	NEXT
 
@@ -274,7 +283,7 @@ DEFWORD divmodsigned, '/mod', 0b00, mulsigned
 	NEXT
 
 ; ( a -- -a )
-DEFWORD negate, '~', 0b00, divmodsigned
+DEFWORD negate, 'neg', 0b00, divmodsigned
 	neg ebx
 	NEXT
 

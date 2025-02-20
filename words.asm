@@ -581,8 +581,16 @@ DEFWORD dictflags, 0b00, dictprev
 	dd rshift
 	dd return
 
+; ( flags -- )
+DEFWORD dictor, 0b00, dictflags
+	mov eax, [latest]
+	shl ebx, 5
+	or [eax-5], bl
+	pop ebx
+	NEXT
+
 ; ( -- )
-DEFWORD dictcom, 'dict,', 0b00, dictflags
+DEFWORD dictcom, ':code', 0b00, dictor
 	call enter
 	dd getword
 	dd cdup
@@ -599,16 +607,19 @@ DEFWORD dictcom, 'dict,', 0b00, dictflags
 	dd litput, latest
 	dd return
 
-; ( flags -- )
-DEFWORD dictor, 0b00, dictcom
-	mov eax, [latest]
-	shl ebx, 5
-	or [eax-5], bl
-	pop ebx
-	NEXT
+; ( -- )
+DEFWORD endcode, ';code', 0b00, dictcom
+	call enter
+	dd lit, 0xad
+	dd ccom
+	dd lit, 0xff
+	dd ccom
+	dd lit, 0xe0
+	dd ccom
+	dd return
 
 ; ( -- )
-DEFWORD words, 0b00, dictor
+DEFWORD words, 0b00, endcode
 	call enter
 	dd litat, latest
 wdsloop	dd dup

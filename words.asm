@@ -672,7 +672,7 @@ DEFWORD wordchar, `''`, 0b00, wordaddr
 wnowc	dd return
 
 ; ( addr len -- )
-DEFWORD dump, 0b00, wordchar
+DEFWORD wdump, 0b00, wordchar
 	call enter
 dumploo	dd cdup
 	dd gotz, dbye
@@ -689,7 +689,7 @@ dbye	dd drop
 	dd return
 
 ; ( -- h )
-DEFWORD stackheight, 0b00, dump
+DEFWORD stackheight, 0b00, wdump
 	mov eax, esp
 	push ebx
 	mov ebx, [stackstart]
@@ -709,7 +709,7 @@ DEFWORD printstack, '.S', 0b00, stackpos
 	dd stackheight
 	dd stackpos
 	dd swap
-	dd dump
+	dd wdump
 	dd nl
 	dd return
 

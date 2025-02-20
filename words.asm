@@ -392,21 +392,25 @@ DEFWORD emits, 0b00, nl
 	dd drop
 	dd return
 
+; ( addr -- c )
 DEFWORD cat, 'c@', 0b00, emits
 	mov bl, [ebx]
 	and ebx, 0xff
 	NEXT
 
+; ( c addr -- )
 DEFWORD cput, 'c!', 0b00, cat
 	pop eax
 	mov [ebx], al
 	pop ebx
 	NEXT
 
+; ( addr -- a )
 DEFWORD dat, '@', 0b00, cput
 	mov ebx, [ebx]
 	NEXT
 
+; ( a addr -- )
 DEFWORD dput, '!', 0b00, dat
 	pop eax
 	mov [ebx], eax
@@ -434,7 +438,7 @@ DEFWORD printhex1, '.x1', 0b00, printhexc
 	dd printhexc
 	dd return
 
-; ( c -- )
+; ( s -- )
 DEFWORD printhex2, '.x2', 0b00, printhex1
 	call enter
 	dd dup
@@ -444,7 +448,7 @@ DEFWORD printhex2, '.x2', 0b00, printhex1
 	dd printhex1
 	dd return
 
-; ( c -- )
+; ( a -- )
 DEFWORD printhex, '.x', 0b00, printhex2
 	call enter
 	dd dup

@@ -26,7 +26,7 @@ stdenv_32bit.mkDerivation {
     ${elfkickers}/bin/sstrip -z ${if withTarget == "vulpforth.zip" then "vulpforthzip" else withTarget}
   '' + lib.optionalString (withTarget == "vulpforth.zip") ''
     ${perlPackages.strip-nondeterminism}/bin/strip-nondeterminism files.zip
-    ${lib.optionalString withUpx "${upx}/bin/upx --best vulpforthzip"}
+    ${lib.optionalString withUpx "${upx}/bin/upx --brute vulpforthzip"}
     ${lib.optionalString withSstrip "${elfkickers}/bin/sstrip -z vulpforthzip"}
     make vulpforth.zip
   '';

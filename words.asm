@@ -791,6 +791,7 @@ cstkok	NEXT
 
 wnfstr	db ' word not found'
 intstr	db ' nointerpret'
+okstr	db ` ok\n`
 DEFWORD repl, 0b00, chkstack
 	call enter
 inmore	dd chkstack
@@ -807,7 +808,7 @@ innote	dd find
 	dd startsnum
 	dd gotz, innonn
 	dd parsenum
-	dd goto, inmore
+	dd goto, inndok
 innonn	dd emits
 	dd lit, wnfstr
 	dd lit, 15
@@ -821,6 +822,19 @@ incii	dd dup
 	dd rot2
 	dd ddrop
 	dd jump
+inndok	dd litat, wordfd
+	dd gonz, inmore
+	dd lit, wordbuf
+	dd lit, wordlen
+	dd cat
+	dd plus
+	dd cat
+	dd lit, 0x20
+	dd eq
+	dd gonz, inmore
+	dd lit, okstr
+	dd lit, 4
+	dd emits
 	dd goto, inmore
 innoin	dd drop
 	dd emits
@@ -1120,8 +1134,6 @@ reqgot	dd ddup
 	dd litput, wordfd
 	dd return
 
-vstr	db ':3'
-okstr	db ` ok\n`
 DEFWORD init, 0b00, require
 	call enter
 	dd lit, okstr

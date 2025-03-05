@@ -794,8 +794,7 @@ intstr	db ' nointerpret'
 okstr	db ` ok\n`
 DEFWORD repl, 0b00, chkstack
 	call enter
-inmore	dd chkstack
-	dd getword
+inmore	dd getword
 	dd ddup
 	dd dup
 	dd gonz, innote
@@ -822,7 +821,8 @@ incii	dd dup
 	dd rot2
 	dd ddrop
 	dd jump
-inndok	dd litat, wordfd
+inndok	dd chkstack
+	dd litat, wordfd
 	dd gonz, inmore
 	dd lit, wordbuf
 	dd lit, wordlen

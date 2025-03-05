@@ -903,7 +903,7 @@ DEFWORD load, 0b00, loadfrom
 	dd loadfrom
 	dd return
 
-freestr	db ` bytes\n`
+freestr	db ` bytes`
 DEFWORD free, 0b00, load
 	call enter
 	dd litat, hereend
@@ -911,7 +911,7 @@ DEFWORD free, 0b00, load
 	dd minus
 	dd print
 	dd lit, freestr
-	dd lit, 7
+	dd lit, 6
 	dd emits
 	dd return
 

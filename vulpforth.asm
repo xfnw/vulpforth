@@ -1,22 +1,3 @@
-; vulp forth, vulpine's weird opinionated forth thing
-;
-; word format:        V
-; name flags previous code
-;      db    dd
-; 
-; flags:
-; immediate nointerpret namelen*6
-;
-; registers:
-; eax - overwritable
-; ebx - value of top of working stack
-; esp - address to after top of working stack
-; ebp - address top of return stack
-; edi - overwritable (stos target)
-; esi - current word contents (lods source)
-; ecx - overwritable
-; edx - overwritable
-
 %macro DEFWORD 4
 	db %2			; name
 	db %3<<6|%strlen(%2)	; flags & length

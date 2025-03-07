@@ -1,0 +1,8 @@
+fox answered questions
+
+how are strings handled?
+	strings are pairs of a pointer to the first character and the length.
+	however, strings created by the " word are additionally null terminated,
+	and some words that interface with linux syscalls that expect null
+	terminated strings (like open) will write a null byte after the length,
+	so be careful when passing slices of longer strings around.

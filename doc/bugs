@@ -1,0 +1,17 @@
+vulpforth's weird behaviors
+
+this is a list of bugs that will not be fixed. if you found a bug not
+listed here, please report it: https://github.com/xfnw/vulpforth/issues
+
+the number parser has no input validation
+	this will cause various unexpected results, 0h $h are parsed as
+	the number 1, and the word not found logic will never run for
+	words starting with a number or $ since they count as numbers
+
+the ok prompt is not emitted for some edge cases
+	since vulpforth is not line buffered, repl determines whether
+	it should emit an ok by checking that the whitespace at the
+	end of the last word consumed by the word word is not a literal
+	space. this heuristic breaks when a word that consumes stdin
+	without using the word word is used at the end of a line, or
+	when a line has a trailing space.

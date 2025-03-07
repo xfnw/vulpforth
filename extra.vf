@@ -35,3 +35,7 @@ create pipebuf 128 allot
 	0 > while 2drop ;
 : cat ( -- )
 	0 word open dup 1 pipe close ;
+
+: forget ( -- )
+	' dup dictprev lit! latest
+	dictname drop lit! here ;

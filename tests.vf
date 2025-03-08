@@ -1,0 +1,71 @@
+require extra.vf
+create tests
+
+"  got " swap " assertion failed: expected " swap
+: assert=
+	2dup = if 2drop return then
+	lit [ , ] lit [ , ] emits .
+	lit [ , ] lit [ , ] emits .
+	abort ;
+" test: " swap
+: t lit [ , ] lit [ , ] emits word emits nl ;
+
+t rot
+9 1 2 3 rot
+1 assert=
+3 assert=
+2 assert=
+9 assert=
+
+t rot>
+9 1 2 3 rot>
+2 assert=
+1 assert=
+3 assert=
+9 assert=
+
+t over
+1 2 3 over
+2 assert=
+3 assert=
+2 assert=
+1 assert=
+
+t 2over
+1 2 3 4 2over
+2 assert=
+4 assert=
+3 assert=
+2 assert=
+1 assert=
+
+t addition
+600 21 + 621 assert=
+
+t create
+: meow ; 1 dictor
+' meow dictflags 1 assert=
+create aaaa
+' aaaa dictflags 1 assert=
+
+t immediate
+: insert42 lit lit , 42 , ; immediate
+: insert24 lit lit , 24 , ; 2 dictor
+: getnums insert42 insert24 ;
+getnums 24 assert= 42 assert=
+
+t dictname_long
+create aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+' latest @ dictname 0 assert= drop
+create aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+' latest @ dictname 63 assert= drop
+
+\ todo: find a way to test not-already-loaded require
+\ that still works when the test is run multiple times
+t require_loaded
+' loaded @
+require extra.vf
+' loaded @
+swap assert=
+
+forget tests

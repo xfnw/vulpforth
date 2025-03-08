@@ -273,13 +273,13 @@ DEFWORD mulsigned, '*', 0b00, minus
 	imul ebx, eax
 	NEXT
 
-; ( a b -- a/b a%b )
+; ( a b -- a%b a/b )
 DEFWORD divmodsigned, '/mod', 0b00, mulsigned
 	pop eax
 	cdq
 	idiv ebx
-	push eax
-	xchg ebx, edx
+	push edx
+	xchg ebx, eax
 	NEXT
 
 ; ( a -- -a )
@@ -461,7 +461,7 @@ DEFWORD printhex, '.x', 0b00, printhex2
 ; ( c -- )
 DEFWORD print, '.', 0b00, printhex
 	call enter
-	dd lit, -1
+	dd lit, 10
 	dd swap
 	dd dup
 	dd isneg
@@ -470,15 +470,14 @@ DEFWORD print, '.', 0b00, printhex
 	dd emit
 pnotn	dd lit, 10
 	dd divmodsigned
-	dd absv
-	dd lit, 0x30
-	dd plus
-	dd swap
 	dd cdup
 	dd gonz, pnotn
-pprint	dd emit
+pprint	dd absv
+	dd lit, 0x30
+	dd plus
+	dd emit
 	dd dup
-	dd lit, -1
+	dd lit, 10
 	dd eq
 	dd gotz, pprint
 	dd drop

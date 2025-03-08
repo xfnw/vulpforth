@@ -10,6 +10,10 @@ create tests
 " test: " swap
 : t lit [ , ] lit [ , ] emits word emits nl ;
 
+t jump
+: h $68 ;
+' h jump $68 assert=
+
 t rot
 9 1 2 3 rot
 1 assert=
@@ -39,8 +43,172 @@ t 2over
 2 assert=
 1 assert=
 
-t addition
+t drop
+1 2 3 drop
+2 assert=
+1 assert=
+
+t 2drop
+1 2 3 4 2drop
+2 assert=
+1 assert=
+
+t nip
+1 2 3 nip
+3 assert=
+1 assert=
+
+t dup
+1 2 dup
+2 assert=
+2 assert=
+1 assert=
+
+t ?dup
+1 0 ?dup
+0 assert=
+1 assert=
+5 6 ?dup
+6 assert=
+6 assert=
+5 assert=
+
+t 2dup
+1 2 3 2dup
+3 assert=
+2 assert=
+3 assert=
+2 assert=
+1 assert=
+
+t swap
+1 2 3 swap
+2 assert=
+3 assert=
+1 assert=
+
+t 2swap
+1 2 3 4 5 2swap
+3 assert=
+2 assert=
+5 assert=
+4 assert=
+1 assert=
+
+t nth
+1 6 5 3 2 nth
+6 assert=
+3 assert=
+5 assert=
+6 assert=
+1 assert=
+
+t lshift
+5 2 lshift
+20 assert=
+1 30 lshift
+1073741824 assert=
+
+t rshift
+21 2 rshift
+5 assert=
+1073741824 30 rshift
+1 assert=
+
+t and
+5 6 and
+4 assert=
+
+t or
+5 6 or
+7 assert=
+
+t xor
+5 6 xor
+3 assert=
+
+t not
+69 not 0 assert=
+0 not 1 assert=
+
+t ~
+1234 ~
+$fffffb2d assert=
+
+t +
 600 21 + 621 assert=
+
+t -^
+90 100 -^
+10 assert=
+
+t 1+
+5 1+ 6 assert=
+
+t 1-
+5 1- 4 assert=
+
+t 4+
+5 4+ 9 assert=
+
+t 4-
+5 4- 1 assert=
+
+t -
+926 305 -
+621 assert=
+
+t *
+12345 6789 *
+83810205 assert=
+12345 $ffffe57b *
+$fb012863 assert=
+
+t /mod
+1234 123 /mod
+10 assert=
+4 assert=
+
+t neg
+1 neg
+$ffffffff assert=
+
+t ?neg
+1 ?neg
+0 assert=
+$ffffffff ?neg
+1 assert=
+
+t abs
+1 abs
+1 assert=
+$ffffffff abs
+1 assert=
+
+t word
+word meow
+4 assert=
+$68 swap !
+
+t "
+' here @
+" yip yap yop"
+2dup + dup c@
+0 assert=
+1- c@
+$70 assert=
+11 assert=
+assert=
+
+t c@_c!
+69 ' here @ c!
+' here @ c@
+69 assert=
+
+t @_!
+99999 ' here @ !
+' here @ @
+99999 assert=
 
 t create
 : meow ; 1 dictor
@@ -68,4 +236,17 @@ require extra.vf
 ' loaded @
 swap assert=
 
+t manual
+" you should see: " swap
+: see lit [ , ] lit [ , ] emits word emits nl ;
+see h
+$68 emit nl
+see cafef00d
+$cafef00d .x nl
+see 2147483647
+1 31 lshift 1- . nl
+see -2147483648
+1 31 lshift . nl
+
+t forget
 forget tests

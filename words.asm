@@ -274,16 +274,16 @@ DEFWORD mulsigned, '*', 0b00, minus
 	NEXT
 
 ; ( a b -- a%b a/b )
-DEFWORD divmodsigned, '/mod', 0b00, mulsigned
+DEFWORD divmod, '/mod', 0b00, mulsigned
 	pop eax
-	cdq
-	idiv ebx
+	xor edx, edx
+	div ebx
 	push edx
 	xchg ebx, eax
 	NEXT
 
 ; ( a -- -a )
-DEFWORD negate, 'neg', 0b00, divmodsigned
+DEFWORD negate, 'neg', 0b00, divmod
 	neg ebx
 	NEXT
 
@@ -468,12 +468,12 @@ DEFWORD print, '.', 0b00, printhex
 	dd gotz, pnotn
 	dd lit, '-'
 	dd emit
+	dd absv
 pnotn	dd lit, 10
-	dd divmodsigned
+	dd divmod
 	dd cdup
 	dd gonz, pnotn
-pprint	dd absv
-	dd lit, 0x30
+pprint	dd lit, 0x30
 	dd plus
 	dd emit
 	dd dup

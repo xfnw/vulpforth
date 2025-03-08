@@ -168,6 +168,8 @@ t /mod
 1234 123 /mod
 10 assert=
 4 assert=
+1 31 lshift 2 /mod
+1 30 lshift assert=
 
 t neg
 1 neg

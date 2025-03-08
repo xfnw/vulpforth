@@ -584,7 +584,7 @@ DEFWORD dictflags, 0b00, dictprev
 ; ( flags -- )
 DEFWORD dictor, 0b00, dictflags
 	mov eax, [latest]
-	shl ebx, 5
+	shl ebx, 6
 	or [eax-5], bl
 	pop ebx
 	NEXT
@@ -1019,7 +1019,7 @@ DEFWORD colon, ':', 0b00, colres
 DEFWORD create, 0b00, colon
 	call enter
 	dd dictcom
-	dd lit, 2
+	dd lit, 1
 	dd dictor
 	dd return
 
@@ -1027,7 +1027,7 @@ DEFWORD create, 0b00, colon
 DEFWORD immediate, 0b00, create
 	push ebx
 	xor ebx, ebx
-	mov bl, 4
+	mov bl, 2
 	jmp dictor
 
 ; ( -- )

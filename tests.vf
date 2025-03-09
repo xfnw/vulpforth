@@ -170,6 +170,7 @@ t /mod
 4 assert=
 1 31 lshift 2 /mod
 1 30 lshift assert=
+0 assert=
 
 t neg
 1 neg

@@ -291,6 +291,8 @@ see h
 $68 emit nl
 see cafef00d
 $cafef00d .x nl
+see 0000e926
+$0000e926 .S
 see 2147483647
 1 31 lshift 1- . nl
 see -2147483648

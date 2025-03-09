@@ -7,6 +7,13 @@ create tests
 	lit [ , ] lit [ , ] emits .
 	lit [ , ] lit [ , ] emits .
 	abort ;
+"  got " swap " assertion failed: expected str " swap
+: assertstr=
+	2dup 5 nth 5 nth str=
+	if 2drop 2drop return then
+	lit [ , ] lit [ , ] emits emits
+	lit [ , ] lit [ , ] emits emits
+	abort ;
 " test: " swap
 : t lit [ , ] lit [ , ] emits word emits nl ;
 
@@ -213,6 +220,50 @@ t @_!
 ' here @ @
 99999 assert=
 
+t mem=
+' here @ 1 c, 2 c, 3 c, 4 c,
+' here @ 1 c, 2 c, 3 c, 5 c,
+2dup 3 mem=
+1 assert=
+4 mem=
+0 assert=
+
+t memcpy
+' here @ 1 c, 2 c, 3 c, 5 c,
+' here @ 1 c, 2 c, 3 c, 4 c,
+' here @ 6 c, 7 c, 8 c, 5 c,
+2dup 3 mem=
+0 assert=
+2dup 3 swap memcpy
+2dup 3 mem=
+1 assert=
+swap drop 4 mem=
+1 assert=
+
+t str=
+" yip" " yip" 1+ str=
+0 assert=
+" yip" " yap" str=
+0 assert=
+" yip" " yip" str=
+1 assert=
+
+t dictname
+' dictname dictname
+" dictname" assertstr=
+
+t dictname_long
+create aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+' latest @ dictname 0 assert= drop
+create aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+' latest @ dictname 63 assert= drop
+
+t dictprev
+' assertstr= dictprev
+' assert= assert=
+' hexchr dictprev
+0 assert=
+
 t create
 : meow ; 1 dictor
 ' meow dictflags 1 assert=
@@ -224,12 +275,6 @@ t immediate
 : insert24 lit lit , 24 , ; 2 dictor
 : getnums insert42 insert24 ;
 getnums 24 assert= 42 assert=
-
-t dictname_long
-create aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-' latest @ dictname 0 assert= drop
-create aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-' latest @ dictname 63 assert= drop
 
 \ todo: find a way to test not-already-loaded require
 \ that still works when the test is run multiple times

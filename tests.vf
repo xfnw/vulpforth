@@ -264,6 +264,10 @@ t dictprev
 ' hexchr dictprev
 0 assert=
 
+t :code
+:code number $53 c, $bb c, $a4 c, 1 c, 0 c, 0 c, ;code
+number 420 assert=
+
 t create
 : meow ; 1 dictor
 ' meow dictflags 1 assert=

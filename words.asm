@@ -1,6 +1,21 @@
 DEFWORD enter, 0b01, loaded
 	PUSHRET esi	; save previous word in return stack
 	pop esi		; grab new word pointer from call
+%ifdef TRACE
+	push ebx
+	mov eax, 4		; write
+	mov ebx, 2		; to stderr
+	lea ecx, [esi-10]	; offset to flags from call enter
+	mov dl, [ecx]
+	and edx, 0b00111111	; get length from flags
+	sub ecx, edx		; get address of name
+	int 0x80
+	mov eax, 4
+	mov ecx, nlstr
+	mov edx, 1
+	int 0x80
+	pop ebx
+%endif
 	NEXT
 
 DEFWORD return, 0b00, enter
@@ -790,7 +805,8 @@ cstkok	NEXT
 
 wnfstr	db ' word not found'
 intstr	db ' nointerpret'
-okstr	db ` ok\n`
+okstr	db ' ok'
+nlstr	db `\n`
 DEFWORD repl, 0b00, chkstack
 	call enter
 inmore	dd getword

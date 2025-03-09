@@ -2,6 +2,9 @@ all: vulpforth
 
 vulpforth.o: words.asm vars.asm
 
+vulpforthtrace.o: vulpforth.asm words.asm vars.asm
+	nasm -f elf -F dwarf -g -dTRACE -o $@ $<
+
 vulpforth.zip: vulpforthzip files.zip
 	cat $^ > $@
 	zip -A $@

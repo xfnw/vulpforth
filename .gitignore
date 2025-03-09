@@ -3,4 +3,5 @@
 *.o
 result*
 vulpforth
+vulpforthtrace
 vulpforthzip

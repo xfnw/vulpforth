@@ -28,6 +28,10 @@ section .data
 %ifdef ZIPAPP
 initfn	db 'init.vf', 0
 %endif
+%ifdef TRACE
+	times 255 db '>'
+angles	db ' '
+%endif
 
 %include "vars.asm"
 

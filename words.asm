@@ -5,6 +5,14 @@ DEFWORD enter, 0b01, loaded
 	push ebx
 	mov eax, 4		; write
 	mov ebx, 2		; to stderr
+	mov edx, retstack+retsz
+	sub edx, ebp
+	shr edx, 2
+	and edx, 255
+	mov ecx, angles+1
+	sub ecx, edx
+	int 0x80
+	mov eax, 4
 	lea ecx, [esi-10]	; offset to flags from call enter
 	mov dl, [ecx]
 	and edx, 0b00111111	; get length from flags

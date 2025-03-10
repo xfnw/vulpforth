@@ -1157,7 +1157,89 @@ reqgot	dd ddup
 	dd litput, wordfd
 	dd return
 
-DEFWORD init, 0b00, require
+nohere	db 'saving allocations not supported'
+vimgh	db 'VULPIMG'
+	dd defhere
+	db loaded-here+4
+	dd here
+DEFWORD save, 0b00, require
+	call enter
+	dd litat, hereend
+	dd lit, retstack
+	dd eq
+	dd gonz, sdhere
+	dd lit, nohere
+	dd lit, 32
+	dd emits
+	dd abort
+sdhere	dd lit, 577	; O_WRONLY|O_CREAT|O_TRUNC
+	dd getword
+	dd open
+	dd dup
+	dd lit, 16
+	dd lit, vimgh
+	dd rot
+	dd lit, 4
+	dd syscall
+	dd drop
+	dd dup
+	dd lit, loaded-here+4	; length of useful vars
+	dd lit, here		; start of useful vars
+	dd rot
+	dd lit, 4		; write
+	dd syscall
+	dd drop
+	dd dup
+	dd lit, retstack-defhere
+	dd lit, defhere
+	dd rot
+	dd lit, 4
+	dd syscall
+	dd drop
+	dd close
+	dd return
+
+bmagic	db 'bad magic'
+DEFWORD restore, 0b00, save
+	call enter
+	dd lit, 0	; read only
+	dd getword
+	dd open
+	dd dup
+	dd lit, 16
+	dd litat, here
+	dd rot
+	dd lit, 3	; read
+	dd syscall
+	dd drop
+	dd lit, vimgh
+	dd litat, here
+	dd lit, 16
+	dd memeq
+	dd gonz, resg
+	dd close
+	dd lit, bmagic
+	dd lit, 9
+	dd emits
+	dd abort
+resg	dd dup
+	dd lit, loaded-here+4	; length of useful vars
+	dd lit, here		; start of useful vars
+	dd rot
+	dd lit, 3		; read
+	dd syscall
+	dd drop
+	dd dup
+	dd lit, retstack-defhere
+	dd lit, defhere
+	dd rot
+	dd lit, 3
+	dd syscall
+	dd drop
+	dd close
+	dd return
+
+DEFWORD init, 0b00, restore
 	call enter
 	dd lit, okstr
 	dd lit, 4

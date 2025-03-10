@@ -1190,8 +1190,11 @@ sdhere	dd lit, 577	; O_WRONLY|O_CREAT|O_TRUNC
 	dd syscall
 	dd drop
 	dd dup
-	dd lit, retstack-defhere
 	dd lit, defhere
+	dd dup
+	dd litat, here
+	dd minusinv
+	dd swap
 	dd rot
 	dd lit, 4
 	dd syscall

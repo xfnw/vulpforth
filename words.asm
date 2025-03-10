@@ -884,7 +884,7 @@ DEFWORD open, 0b00, repl
 	dd lit, 0
 	dd swap
 	dd cput		; null the end of the path
-	dd lit, 0	; dont specify mode
+	dd lit, 420	; mode 644
 	dd rot2
 	dd lit, 5	; open
 	dd syscall

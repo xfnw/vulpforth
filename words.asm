@@ -1162,6 +1162,8 @@ vimgh	db 'VULPIMG'
 	dd defhere
 	db loaded-here+4
 	dd here
+	dd init
+vimgl	equ $ - vimgh
 DEFWORD save, 0b00, require
 	call enter
 	dd litat, hereend
@@ -1176,7 +1178,7 @@ sdhere	dd lit, 577	; O_WRONLY|O_CREAT|O_TRUNC
 	dd getword
 	dd open
 	dd dup
-	dd lit, 16
+	dd lit, vimgl
 	dd lit, vimgh
 	dd rot
 	dd lit, 4
@@ -1209,7 +1211,7 @@ DEFWORD restore, 0b00, save
 	dd getword
 	dd open
 	dd dup
-	dd lit, 16
+	dd lit, vimgl
 	dd litat, here
 	dd rot
 	dd lit, 3	; read
@@ -1217,7 +1219,7 @@ DEFWORD restore, 0b00, save
 	dd drop
 	dd lit, vimgh
 	dd litat, here
-	dd lit, 16
+	dd lit, vimgl
 	dd memeq
 	dd gonz, resg
 	dd close

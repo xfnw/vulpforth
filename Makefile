@@ -26,6 +26,10 @@ zip/src/zip.o: zip/src/zip.h zip/src/miniz.h
 %.o: %.c
 	${CC} -m32 -c ${CFLAGS} -o $@ $<
 
+%.bin: %.asm
+	nasm -f bin -o $@ $<
+	chmod +x $@
+
 %.o: %.asm
 	nasm -f elf -F dwarf -g $<
 

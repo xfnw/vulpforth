@@ -1,9 +1,11 @@
 #define _GNU_SOURCE
 
 #include "zip/src/zip.h"
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
+#include <sys/syscall.h>
 #include <unistd.h>
 
 static struct zip_t *z;
@@ -20,7 +22,7 @@ extern int zipfd_open(int len, char *name, int flags) {
 	name[len] = '\0';
 
 	if (flags != 0)
-		return -13; /* EACCES */
+		return syscall(SYS_open, name, flags, 420);
 	if (zip_entry_open(z, name) != 0)
 		return -1;
 

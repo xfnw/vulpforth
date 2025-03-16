@@ -1246,6 +1246,7 @@ resg	dd dup
 
 DEFWORD init, 0b00, restore
 	call enter
+	dd chkstack
 	dd lit, okstr
 	dd lit, 4
 	dd emits

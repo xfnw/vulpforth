@@ -525,8 +525,35 @@ DEFWORD gt, '>', 0b00, eq
 	jg eqieq
 	NEXT
 
+; ( a b -- a<b )
+DEFWORD lt, '<', 0b00, gt
+	pop eax
+	xchg edx, ebx
+	xor ebx, ebx
+	cmp eax, edx
+	jl eqieq
+	NEXT
+
+; ( a b -- a>=b )
+DEFWORD gte, '>=', 0b00, lt
+	pop eax
+	xchg edx, ebx
+	xor ebx, ebx
+	cmp eax, edx
+	jge eqieq
+	NEXT
+
+; ( a b -- a<=b )
+DEFWORD lte, '<=', 0b00, gte
+	pop eax
+	xchg edx, ebx
+	xor ebx, ebx
+	cmp eax, edx
+	jle eqieq
+	NEXT
+
 ; ( m1 m2 len -- m1==m2 )
-DEFWORD memeq, 'mem=', 0b00, gt
+DEFWORD memeq, 'mem=', 0b00, lte
 	xchg ecx, ebx
 	xor ebx, ebx
 	pop eax

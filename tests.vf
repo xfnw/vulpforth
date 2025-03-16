@@ -220,6 +220,26 @@ t @_!
 ' here @ @
 99999 assert=
 
+t <
+6 6 < 0 assert=
+6 5 < 0 assert=
+5 6 < 1 assert=
+
+t >
+6 6 > 0 assert=
+6 5 > 1 assert=
+5 6 > 0 assert=
+
+t <=
+6 6 <= 1 assert=
+6 5 <= 0 assert=
+5 6 <= 1 assert=
+
+t >=
+6 6 >= 1 assert=
+6 5 >= 1 assert=
+5 6 >= 0 assert=
+
 t mem=
 ' here @ 1 c, 2 c, 3 c, 4 c,
 ' here @ 1 c, 2 c, 3 c, 5 c,
@@ -296,7 +316,7 @@ $68 emit nl
 see cafef00d
 $cafef00d .x nl
 see 0000e926
-$0000e926 .S
+$0000e926 .S drop
 see 2147483647
 1 31 lshift 1- . nl
 see -2147483648

@@ -1,19 +1,17 @@
 #define _GNU_SOURCE
 
+#include "zip/src/zip.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <unistd.h>
-#include "zip/src/zip.h"
 
 static struct zip_t *z;
 
 extern void zipfd_init(void) {
 	z = zip_open("/proc/self/exe", 0, 'r');
 	if (z == NULL) {
-		fprintf(stderr,
-			"cannot open zip (you do have /proc, yes?)\n"
-			);
+		fprintf(stderr, "cannot open zip (you do have /proc, yes?)\n");
 		exit(1);
 	}
 }

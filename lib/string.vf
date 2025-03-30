@@ -1,0 +1,7 @@
+: s" ( -- )
+	lit goto , lit@ here 0 ,
+	" rot lit@ here swap !
+	swap lit lit , , lit lit , , ; immediate
+: ." ( -- )
+	[ ' s" , ]
+	lit emits , ; immediate

@@ -139,5 +139,9 @@ pipebuf
 pipe		i o --
 cat		--
 
+# lib/string.vf
+s"              --
+."              --
+
 # lib/util.vf
 forget		--

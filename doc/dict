@@ -119,19 +119,25 @@ save		--
 restore		--
 init		--
 
-# extra
+# lib/branch.vf
 if		-- a -> b --
 !if		-- a -> b --
 else		a -- a -> --
 then		a -- -> --
+[then]		--
+[if]		b --
+
+# lib/loop.vf
 begin		-- a
 while		a -- -> b --
 until		a -- -> b --
 loop		a -- -> --
-[then]		--
-[if]		b --
+
+# lib/signal.vf
 sigcatch	--
 pipebuf
 pipe		i o --
 cat		--
+
+# lib/util.vf
 forget		--

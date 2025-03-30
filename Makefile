@@ -10,7 +10,7 @@ vulpforth.zip: vulpforthzip files.zip
 	zip -A $@
 	chmod +x $@
 
-files.zip: doc *.vf
+files.zip: doc lib *.vf
 	zip -r $@ $^
 
 vulpforthzip: vulpforthzip.o zipfd.o zip/src/zip.o

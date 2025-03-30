@@ -1,0 +1,3 @@
+: forget ( -- )
+	' dup dictprev lit! latest
+	dictname drop lit! here ;

@@ -1,4 +1,5 @@
-require extra.vf
+require lib/branch.vf
+require lib/util.vf
 create tests
 
 "  got " swap " assertion failed: expected " swap
@@ -304,7 +305,7 @@ getnums 24 assert= 42 assert=
 \ that still works when the test is run multiple times
 t require_loaded
 ' loaded @
-require extra.vf
+require lib/branch.vf
 ' loaded @
 swap assert=
 

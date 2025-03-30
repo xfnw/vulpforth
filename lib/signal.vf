@@ -1,0 +1,3 @@
+: sigcatch ( -- )
+	0 lit abort 11 48 syscall
+	lit abort 2 48 syscall drop ;

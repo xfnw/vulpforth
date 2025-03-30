@@ -6,7 +6,7 @@ a forth with some rather odd design decisions:
   - no special treatment of variables, requires manually retrieving
     values from memory, ie `' here @` instead of `here`
   - words that step on your toes (if/then/else, begin/until) are
-    kept out of the core words (those are in [extra.vf](./extra.vf))
+    kept out of the core words (those are in [lib](./lib))
   - no doer/does>
 - takes inspiration from:
   - [miniforth](https://github.com/meithecatte/miniforth)

@@ -1,3 +1,6 @@
+require lib/branch.vf
+require lib/loop.vf
+
 create pipebuf 128 allot
 : pipe ( i o -- )
 	begin 128 2over lit pipebuf swap 3 syscall

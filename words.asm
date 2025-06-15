@@ -722,9 +722,12 @@ wnowc	dd return
 DEFWORD breakglass, 0b00, wordchar
 	push ebx
 	xor eax, eax
-	mov al, 125			; mprotect
-	mov ebx, starttext		; first word
-	mov ecx, endtext-starttext	; length of text section
+	mov al, 125		; mprotect
+	mov ebx, starttext	; first word
+	shr ebx, 12		; page crimes
+	shl ebx, 12
+	mov ecx, endtext	; length of text section
+	sub ecx, ebx
 	xor edx, edx
 	mov dl, 7	; PROT_READ|PROT_WRITE|PROT_EXEC
 	int 0x80

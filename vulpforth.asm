@@ -28,14 +28,13 @@ section .data
 %ifdef ZIPAPP
 initfn	db 'init.vf', 0
 %endif
-%ifdef TRACE
 	times 255 db '>'
 angles	db ' '
-%endif
 
 %include "vars.asm"
 
 section .text
+starttext:
 %ifdef ZIPAPP
 	global main
 	extern zipfd_init
@@ -77,7 +76,7 @@ restart	mov ebp, retstack+retsz	; initialize return stack
 	cld			; set direction to forwards
 	jmp init
 
-filesize equ $ - $$
+endtext:
 
 section .bss
 wordlen resb 1		; length of last read word

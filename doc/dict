@@ -86,6 +86,9 @@ words		--
 find		str len -- addr
 '		-- addr
 ''		-- b
+breakglass	--
+trace		--
+untrace		--
 wdump		addr len --
 stackheight	-- h
 stackpos	-- p

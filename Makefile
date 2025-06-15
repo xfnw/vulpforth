@@ -2,9 +2,6 @@ all: vulpforth
 
 vulpforth.o: words.asm vars.asm
 
-vulpforthtrace.o: vulpforth.asm words.asm vars.asm
-	nasm -f elf -F dwarf -g -dTRACE -o $@ $<
-
 vulpforth.zip: vulpforthzip files.zip
 	cat $^ > $@
 	zip -A $@
@@ -37,4 +34,4 @@ zip/src/zip.o: zip/src/zip.h zip/src/miniz.h
 	${LD} -m elf_i386 -o $@ $<
 
 clean:
-	rm -f *.o *.zip vulpforth vulpforthtrace vulpforthzip zip/src/zip.o
+	rm -f *.o *.zip vulpforth vulpforthzip zip/src/zip.o

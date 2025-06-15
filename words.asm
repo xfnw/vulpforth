@@ -1,7 +1,7 @@
 DEFWORD enter, 0b01, loaded
 	PUSHRET esi	; save previous word in return stack
 	pop esi		; grab new word pointer from call
-%ifdef TRACE
+tnext	NEXT
 	push ebx
 	mov eax, 4		; write
 	mov ebx, 2		; to stderr
@@ -23,7 +23,6 @@ DEFWORD enter, 0b01, loaded
 	mov edx, 1
 	int 0x80
 	pop ebx
-%endif
 	NEXT
 
 DEFWORD return, 0b00, enter
@@ -720,8 +719,34 @@ DEFWORD wordchar, `''`, 0b00, wordaddr
 	dd cat
 wnowc	dd return
 
+DEFWORD breakglass, 0b00, wordchar
+	push ebx
+	xor eax, eax
+	mov al, 125			; mprotect
+	mov ebx, starttext		; first word
+	mov ecx, endtext-starttext	; length of text section
+	xor edx, edx
+	mov dl, 7	; PROT_READ|PROT_WRITE|PROT_EXEC
+	int 0x80
+	pop ebx
+	NEXT
+
+DEFWORD trace, 0b00, breakglass
+	call enter
+	dd breakglass
+	dd lit, 0x53909090
+	dd litput, tnext
+	dd return
+
+DEFWORD untrace, 0b00, trace
+	call enter
+	dd breakglass
+	dd lit, 0x53e0ffad
+	dd litput, tnext
+	dd return
+
 ; ( addr len -- )
-DEFWORD wdump, 0b00, wordchar
+DEFWORD wdump, 0b00, untrace
 	call enter
 dumploo	dd cdup
 	dd gotz, dbye

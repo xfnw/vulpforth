@@ -728,6 +728,8 @@ DEFWORD breakglass, 0b00, wordchar
 	xor edx, edx
 	mov dl, 7	; PROT_READ|PROT_WRITE|PROT_EXEC
 	int 0x80
+	cmp eax, 0
+	jnz abort
 	pop ebx
 	NEXT
 

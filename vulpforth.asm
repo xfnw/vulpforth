@@ -28,8 +28,6 @@ section .data
 %ifdef ZIPAPP
 initfn	db 'init.vf', 0
 %endif
-	times 255 db '>'
-angles	db ' '
 
 %include "vars.asm"
 
@@ -53,14 +51,19 @@ main:
 	; FIXME: figure out how to not need this
 	xor eax, eax
 	mov al, 125			; mprotect
-	mov ebx, wordlen		; start of bss
-	mov ecx, retstack+retsz-wordlen	; length of bss
+	mov ebx, astart			; start of bss
+	mov ecx, retstack+retsz-astart	; length of bss
 	xor edx, edx
 	mov dl, 7	; PROT_READ|PROT_WRITE|PROT_EXEC
 	int 0x80
 %else
 _start:
 %endif
+	xor ecx, ecx
+aloop	dec cl
+	mov [astart+ecx], byte '>'
+	jnz aloop
+	mov [angles], byte ' '
 	mov [stackstart], esp	; keep initial stack position
 %ifdef ZIPAPP
 	mov ebp, retstack+retsz	; initialize return stack
@@ -79,6 +82,8 @@ restart	mov ebp, retstack+retsz	; initialize return stack
 endtext:
 
 section .bss
+astart	resb 255
+angles	resb 1
 wordlen resb 1		; length of last read word
 wordbuf resb 256	; last read word
 

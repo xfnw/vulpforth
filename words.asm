@@ -351,11 +351,25 @@ badrd	xor ebx, ebx
 	push ebx
 	jmp goodrd
 
+; ( c -- )
+DEFWORD emit, 0b00, getword
+	push ebx
+	xor eax, eax
+	mov al, 4
+	xor ebx, ebx
+	inc ebx
+	mov ecx, esp
+	mov edx, ebx
+	int 0x80
+	pop ebx
+	pop ebx
+	NEXT
+
 ; ( -- str len )
 ; adds a lil null termination, as a treat (not included in length)
 ; so that its convenient to use with syscalls that take paths etc
 ; decrement here after using if you dont want this
-DEFWORD string, '"', 0b00, getword
+DEFWORD string, '"', 0b00, emit
 	push ebx
 	mov edi, [here]
 	push edi
@@ -378,21 +392,35 @@ strbye	mov ebx, ecx
 	mov [here], ecx
 	NEXT
 
-; ( c -- )
-DEFWORD emit, 0b00, string
-	push ebx
-	xor eax, eax
-	mov al, 4
-	xor ebx, ebx
-	inc ebx
-	mov ecx, esp
-	mov edx, ebx
-	int 0x80
-	pop ebx
-	pop ebx
-	NEXT
+DEFWORD sstring, 's"', 0b10, string
+	call enter
+	dd lit, goto
+	dd dcom
+	dd litat, here
+	dd lit, 0
+	dd dcom
+	dd string
+	dd rot
+	dd litat, here
+	dd swap
+	dd dput
+	dd swap
+	dd lit, lit
+	dd dcom
+	dd dcom
+	dd lit, lit
+	dd dcom
+	dd dcom
+	dd return
 
-DEFWORD spc, 0b00, emit
+DEFWORD dotstring, '."', 0b10, sstring
+	call enter
+	dd sstring
+	dd lit, emits
+	dd dcom
+	dd return
+
+DEFWORD spc, 0b00, dotstring
 	call enter
 	dd lit, ' '
 	dd emit

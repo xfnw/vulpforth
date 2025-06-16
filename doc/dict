@@ -53,8 +53,10 @@ neg		a -- -a
 ?neg		a -- a>>31
 abs		a -- |a|
 word		-- waddr wsize
-"		-- str len
 emit		c --
+"		-- str len
+s"              -> -- str len
+."              -> --
 spc		--
 nl		--
 emits		str len --
@@ -141,10 +143,6 @@ sigcatch	--
 pipebuf
 pipe		i o --
 cat		--
-
-# lib/string.vf
-s"              --
-."              --
 
 # lib/util.vf
 forget		--

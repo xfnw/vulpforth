@@ -34,4 +34,4 @@ zip/src/zip.o: zip/src/zip.h zip/src/miniz.h
 	${LD} -m elf_i386 -o $@ $<
 
 clean:
-	rm -f *.o *.zip vulpforth vulpforthzip zip/src/zip.o
+	rm -f *.o vulpforth vulpforthzip vulpforth.zip files.zip zip/src/zip.o

@@ -27,7 +27,7 @@ stdenv_32bit.mkDerivation {
   '' + lib.optionalString (withTarget == "vulpforth.zip") ''
     ${perlPackages.strip-nondeterminism}/bin/strip-nondeterminism files.zip
     ${lib.optionalString withUpx "${upx}/bin/upx --brute vulpforthzip"}
-    ${lib.optionalString withSstrip "${elfkickers}/bin/sstrip -z vulpforthzip"}
+    ${lib.optionalString withSstrip "${elfkickers}/bin/sstrip vulpforthzip"}
     make vulpforth.zip
   '';
 

@@ -1,8 +1,0 @@
-: begin ( -- a )
-	lit@ here ; immediate
-: while ( a -- ) \ turns into ( b -- )
-	lit gonz , , ; immediate
-: until ( a -- ) \ turns into ( b -- )
-	lit gotz , , ; immediate
-: loop ( a -- )
-	lit goto , , ; immediate

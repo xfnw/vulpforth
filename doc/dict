@@ -88,6 +88,15 @@ words		--
 find		str len -- addr
 '		-- addr
 ''		-- b
+if		-- a -> b --
+else		a -- a -> --
+then		a -- -> --
+[then]		--
+[if]		b --
+begin		-- a
+while		a -- -> b --
+until		a -- -> b --
+loop		a -- -> --
 breakglass	--
 trace		--
 untrace		--
@@ -123,20 +132,6 @@ require		--
 save		--
 restore		--
 init		--
-
-# lib/branch.vf
-if		-- a -> b --
-!if		-- a -> b --
-else		a -- a -> --
-then		a -- -> --
-[then]		--
-[if]		b --
-
-# lib/loop.vf
-begin		-- a
-while		a -- -> b --
-until		a -- -> b --
-loop		a -- -> --
 
 # lib/signal.vf
 sigcatch	--

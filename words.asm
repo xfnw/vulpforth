@@ -747,7 +747,83 @@ DEFWORD wordchar, `''`, 0b00, wordaddr
 	dd cat
 wnowc	dd return
 
-DEFWORD breakglass, 0b00, wordchar
+; ( -- a )
+DEFWORD if, 0b10, wordchar
+	call enter
+	dd lit, gotz
+	dd dcom
+	dd litat, here
+	dd lit, 0
+	dd dcom
+	dd return
+
+; ( a -- a )
+DEFWORD else, 0b10, if
+	call enter
+	dd lit, goto
+	dd dcom
+	dd litat, here
+	dd lit, 0
+	dd dcom
+	dd dup
+	dd increment4
+	dd rot
+	dd dput
+	dd return
+
+; ( a -- )
+DEFWORD then, 0b10, else
+	call enter
+	dd litat, here
+	dd swap
+	dd dput
+	dd return
+
+DEFWORD bthen, '[then]', 0b00, then
+	NEXT
+
+; ( b -- )
+DEFWORD bif, '[if]', 0b00, bthen
+	call enter
+	dd gonz, bifret
+bifin	dd getword
+	dd lit, bthen-11	; location of '[then]'
+	dd lit, 6		; length of '[then]'
+	dd streq
+	dd gotz, bifin
+bifret	dd return
+
+; ( -- a )
+DEFWORD begin, 0b10, bif
+	call enter
+	dd litat, here
+	dd return
+
+; ( a -- )
+DEFWORD while, 0b10, begin
+	call enter
+	dd lit, gonz
+	dd dcom
+	dd dcom
+	dd return
+
+; ( a -- )
+DEFWORD until, 0b10, while
+	call enter
+	dd lit, gotz
+	dd dcom
+	dd dcom
+	dd return
+
+; ( a -- )
+DEFWORD loop, 0b10, until
+	call enter
+	dd lit, goto
+	dd dcom
+	dd dcom
+	dd return
+
+DEFWORD breakglass, 0b00, loop
 	push ebx
 	xor eax, eax
 	mov al, 125		; mprotect

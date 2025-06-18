@@ -1368,7 +1368,7 @@ sdhere	dd lit, 577	; O_WRONLY|O_CREAT|O_TRUNC
 bmagic	db 'bad magic'
 DEFWORD restore, 0b00, save
 	call enter
-	dd lit, 0	; read only
+	dd lit, 256	; O_RDONLY|O_NOCTTY
 	dd getword
 	dd open
 	dd dup

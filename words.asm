@@ -206,11 +206,20 @@ DEFWORD syscall6, 0b00, syscall
 
 ; ( count buf fd -- )
 DEFWORD readall, 0b00, syscall6
-	call enter
-	dd lit, 3
-	dd syscall
-	dd drop
-	dd return
+	pop ecx		; buf
+	pop edx		; count
+ragain	mov eax, 3	; read
+	int 0x80	; syscall
+	test eax, eax	; check result
+	js rneg		; got negative
+	jz pdone	; read zero
+	add ecx, eax	; offset amount read
+	sub edx, eax
+	jg ragain	; maybe more to read
+	jmp pdone	; no more room
+rneg	cmp eax, -4	; interrupted?
+	je ragain	; yes, try again
+	jmp abort	; no, abort
 
 ; ( count buf fd -- )
 DEFWORD writeall, 0b00, readall
@@ -223,7 +232,7 @@ wagain	mov eax, 4	; write
 	add ecx, eax	; offset amount written
 	sub edx, eax	; check if more needed
 	jnz wagain	; yes, try again
-	pop ebx
+pdone	pop ebx
 	NEXT
 wneg	cmp eax, -4	; interrupted?
 	je wagain	; yes, try again

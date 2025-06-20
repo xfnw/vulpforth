@@ -214,11 +214,20 @@ DEFWORD readall, 0b00, syscall6
 
 ; ( count buf fd -- )
 DEFWORD writeall, 0b00, readall
-	call enter
-	dd lit, 4
-	dd syscall
-	dd drop
-	dd return
+	pop ecx		; buf
+	pop edx		; count
+wagain	mov eax, 4	; write
+	int 0x80	; syscall
+	test eax, eax	; result negative?
+	js wneg		; yes, handle it
+	add ecx, eax	; offset amount written
+	sub edx, eax	; check if more needed
+	jnz wagain	; yes, try again
+	pop ebx
+	NEXT
+wneg	cmp eax, -4	; interrupted?
+	je wagain	; yes, try again
+	jmp abort	; otherwise abort
 
 ; ( a b -- a<<b )
 DEFWORD lshift, 0b00, writeall

@@ -462,9 +462,7 @@ DEFWORD emits, 0b00, nl
 	call enter
 	dd swap
 	dd lit, 1
-	dd lit, 4
-	dd syscall
-	dd drop
+	dd writeall
 	dd return
 
 ; ( addr -- c )

@@ -204,8 +204,22 @@ DEFWORD syscall6, 0b00, syscall
 	pop ebp
 	NEXT
 
+; ( count buf fd -- )
+DEFWORD readall, 0b00, syscall6
+	call enter
+	dd lit, 3
+	dd syscall
+	dd return
+
+; ( count buf fd -- )
+DEFWORD writeall, 0b00, readall
+	call enter
+	dd lit, 4
+	dd syscall
+	dd return
+
 ; ( a b -- a<<b )
-DEFWORD lshift, 0b00, syscall6
+DEFWORD lshift, 0b00, writeall
 	pop ecx
 	xchg ebx, ecx
 	shl ebx, cl
@@ -1342,15 +1356,13 @@ sdhere	dd lit, 577	; O_WRONLY|O_CREAT|O_TRUNC
 	dd lit, vimgl
 	dd lit, vimgh
 	dd rot
-	dd lit, 4
-	dd syscall
+	dd writeall
 	dd drop
 	dd dup
 	dd lit, loaded-here+4	; length of useful vars
 	dd lit, here		; start of useful vars
 	dd rot
-	dd lit, 4		; write
-	dd syscall
+	dd writeall
 	dd drop
 	dd dup
 	dd lit, defhere
@@ -1359,8 +1371,7 @@ sdhere	dd lit, 577	; O_WRONLY|O_CREAT|O_TRUNC
 	dd minusinv
 	dd swap
 	dd rot
-	dd lit, 4
-	dd syscall
+	dd writeall
 	dd drop
 	dd close
 	dd return
@@ -1375,8 +1386,7 @@ DEFWORD restore, 0b00, save
 	dd lit, vimgl
 	dd litat, here
 	dd rot
-	dd lit, 3	; read
-	dd syscall
+	dd readall
 	dd drop
 	dd lit, vimgh
 	dd litat, here
@@ -1392,15 +1402,13 @@ resg	dd dup
 	dd lit, loaded-here+4	; length of useful vars
 	dd lit, here		; start of useful vars
 	dd rot
-	dd lit, 3		; read
-	dd syscall
+	dd readall
 	dd drop
 	dd dup
 	dd lit, retstack-defhere
 	dd lit, defhere
 	dd rot
-	dd lit, 3
-	dd syscall
+	dd readall
 	dd drop
 	dd close
 	dd return

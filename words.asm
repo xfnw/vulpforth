@@ -204,19 +204,23 @@ DEFWORD syscall6, 0b00, syscall
 	pop ebp
 	NEXT
 
-; ( count buf fd -- )
+; ( count buf fd -- count )
 DEFWORD readall, 0b00, syscall6
 	pop ecx		; buf
 	pop edx		; count
+	push ecx	; save orig buf
 ragain	mov eax, 3	; read
 	int 0x80	; syscall
 	test eax, eax	; check result
 	js rneg		; got negative
-	jz pdone	; read zero
+	jz rdone	; read zero
 	add ecx, eax	; offset amount read
 	sub edx, eax
 	jg ragain	; maybe more to read
-	jmp pdone	; no more room
+rdone	pop ebx		; get orig buf
+	sub ebx, ecx	; calc total
+	neg ebx
+	NEXT
 rneg	cmp eax, -4	; interrupted?
 	je ragain	; yes, try again
 	jmp abort	; no, abort
@@ -232,7 +236,7 @@ wagain	mov eax, 4	; write
 	add ecx, eax	; offset amount written
 	sub edx, eax	; check if more needed
 	jnz wagain	; yes, try again
-pdone	pop ebx
+	pop ebx
 	NEXT
 wneg	cmp eax, -4	; interrupted?
 	je wagain	; yes, try again
@@ -1402,6 +1406,7 @@ DEFWORD restore, 0b00, save
 	dd litat, here
 	dd rot
 	dd readall
+	dd drop
 	dd lit, vimgh
 	dd litat, here
 	dd lit, vimgl
@@ -1417,11 +1422,13 @@ resg	dd dup
 	dd lit, here		; start of useful vars
 	dd rot
 	dd readall
+	dd drop
 	dd dup
 	dd lit, retstack-defhere
 	dd lit, defhere
 	dd rot
 	dd readall
+	dd drop
 	dd close
 	dd return
 

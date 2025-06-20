@@ -53,7 +53,7 @@ DEFWORD goto, 0b01, litput
 	NEXT
 
 DEFWORD gotz, 0b01, goto
-	cmp ebx, 0	; check if top of stack is 0
+	test ebx, ebx	; check if top of stack is 0
 	pop ebx		; consume it
 	lodsd		; grab next colon-word token
 	jnz notgon	; skip if not zero
@@ -61,7 +61,7 @@ DEFWORD gotz, 0b01, goto
 notgon	NEXT
 
 DEFWORD gonz, 0b01, gotz
-	cmp ebx, 0	; check if top of stack is 0
+	test ebx, ebx	; check if top of stack is 0
 	pop ebx		; consume it
 	lodsd		; grab next colon-word token
 	jz yesgon	; skip if zero
@@ -140,7 +140,7 @@ DEFWORD dup, 0b00, tuck
 
 ; ( a -- a a? )
 DEFWORD cdup, '?dup', 0b00, dup
-	cmp ebx, 0
+	test ebx, ebx
 	jz nodup
 	push ebx
 nodup	NEXT
@@ -278,7 +278,7 @@ DEFWORD bxor, 'xor', 0b00, bor
 DEFWORD lnot, 'not', 0b00, bxor
 	xchg eax, ebx
 	xor ebx, ebx
-	cmp eax, 0
+	test eax, eax
 	jnz lnotz
 	inc ebx
 lnotz	NEXT
@@ -871,7 +871,7 @@ DEFWORD breakglass, 0b00, loop
 	xor edx, edx
 	mov dl, 7	; PROT_READ|PROT_WRITE|PROT_EXEC
 	int 0x80
-	cmp eax, 0
+	test eax, eax
 	jnz abort
 	pop ebx
 	NEXT
@@ -948,7 +948,7 @@ DEFWORD abort, 0b00, bye
 
 ; ( a -- a )
 DEFWORD cabort, '?abort', 0b00, abort
-	cmp ebx, 0
+	test ebx, ebx
 	jz abort
 	NEXT
 

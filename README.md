@@ -4,7 +4,10 @@ a forth with some rather odd design decisions:
 
 - no hidden behavior
   - no special treatment of variables, requires manually retrieving
-    values from memory, ie `' here @` instead of `here`
+    values from memory, eg `' here @` instead of `here`
+- recursion is a first-class feature
+  - words are already in the dictionary while being defined
+  - tail calls with the `goto` word
 - takes inspiration from:
   - [miniforth](https://github.com/meithecatte/miniforth)
     (dtc using `lods`, dedicating a register to the value at the top
